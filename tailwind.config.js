@@ -6,6 +6,23 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [nextui()],
+  plugins: [
+    nextui({
+      themes: {
+        light: {
+          colors: {
+            background: '#f8fafc',
+            content1: '#f8fafc',
+          },
+        },
+        dark: {
+          colors: {
+            background: '#0c0a09',
+          },
+        },
+      },
+    }),
+    require('tailwind-scrollbar')({ nocompatible: true, preferredStrategy: 'pseudoelements' }),
+  ],
   darkMode: 'class',
 }

@@ -1,31 +1,30 @@
 import { FormEvent, useState } from 'react'
-import { useSetAtom } from 'jotai'
 import { Button } from '@nextui-org/button'
 import { Input } from '@nextui-org/input'
 import CheckIcon from '@heroicons/react/24/outline/CheckIcon'
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon'
 import { Member } from '../../stores/models'
-import { membersAtom } from '../../stores'
+import { MAX_MEMBER_NAME_LENGTH } from '../../constants'
 
 interface Props {
-  onFinish: () => void
+  onSubmit: (member: Member) => void
+  onCancel: () => void
+  selectedMember?: Member
 }
 
-export const AddMember = ({ onFinish }: Props) => {
-  const [value, setValue] = useState('')
+export const MemberInput = ({ onSubmit, onCancel, selectedMember }: Props) => {
+  const [value, setValue] = useState(selectedMember?.name || '')
   const [isTouched, setIsTouched] = useState(false)
-  const setMembers = useSetAtom(membersAtom)
 
   const isInvalid = !value.trim() && isTouched
 
-  const addMember = (event: FormEvent) => {
+  const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    setMembers((members) => [...(members as Member[]), { name: value, id: crypto.randomUUID() }])
-    onFinish()
+    onSubmit({ name: value, id: selectedMember?.id || crypto.randomUUID() })
   }
 
   return (
-    <form className="flex gap-1" onSubmit={addMember}>
+    <form className="flex gap-1" onSubmit={handleSubmit}>
       <Input
         placeholder="Nama anggota"
         className="flex-grow"
@@ -36,13 +35,15 @@ export const AddMember = ({ onFinish }: Props) => {
           setValue(value)
           setIsTouched(true)
         }}
-        maxLength={50}
+        maxLength={MAX_MEMBER_NAME_LENGTH}
+        variant="bordered"
         radius="sm"
+        isClearable
       />
       <Button isIconOnly variant="flat" type="submit" radius="sm">
         <CheckIcon className="w-5 h-5" />
       </Button>
-      <Button isIconOnly variant="flat" type="submit" radius="sm" onClick={onFinish}>
+      <Button isIconOnly variant="flat" type="submit" radius="sm" onClick={onCancel}>
         <XMarkIcon className="w-5 h-5" />
       </Button>
     </form>
