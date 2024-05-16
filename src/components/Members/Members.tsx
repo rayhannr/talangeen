@@ -29,6 +29,11 @@ export const Members = () => {
     setIsAdding(false)
   }
 
+  const resetSearch = () => {
+    setIsSearching(false)
+    setKeyword('')
+  }
+
   return (
     <div className="flex-grow">
       <div className="flex flex-wrap justify-between items-center mb-2">
@@ -75,7 +80,7 @@ export const Members = () => {
                 onValueChange={setKeyword}
                 endContent={<MagnifyingGlassIcon className="w-5 h-5" />}
               />
-              <Button isIconOnly variant="flat" onClick={() => setIsSearching(false)} radius="sm">
+              <Button isIconOnly variant="flat" onClick={resetSearch} radius="sm">
                 <XMarkIcon className="w-5 h-5" />
               </Button>
             </div>
