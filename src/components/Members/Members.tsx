@@ -37,17 +37,13 @@ export const Members = () => {
   return (
     <div className="flex-grow">
       <div className="flex flex-wrap justify-between items-center mb-2">
-        <p className="font-bold">Anggota</p>
+        <p className="font-bold">
+          Anggota ({members.length}/{MAX_MEMBER_COUNT})
+        </p>
         <div className="flex gap-1">
           {!!members.length && !isSearching && (
             <Tooltip content="Cari anggota">
-              <Button
-                isIconOnly
-                variant="flat"
-                isDisabled={isAdding || members.length >= MAX_MEMBER_COUNT}
-                onClick={() => setIsSearching(true)}
-                radius="sm"
-              >
+              <Button isIconOnly variant="flat" isDisabled={isAdding} onClick={() => setIsSearching(true)} radius="sm">
                 <MagnifyingGlassIcon className="w-5 h-5" />
               </Button>
             </Tooltip>
@@ -78,7 +74,11 @@ export const Members = () => {
                 placeholder="Cari anggota"
                 value={keyword}
                 onValueChange={setKeyword}
+                autoFocus
                 endContent={<MagnifyingGlassIcon className="w-5 h-5" />}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') resetSearch()
+                }}
               />
               <Button isIconOnly variant="flat" onClick={resetSearch} radius="sm">
                 <XMarkIcon className="w-5 h-5" />

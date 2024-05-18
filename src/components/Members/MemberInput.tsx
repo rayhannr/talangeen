@@ -35,10 +35,14 @@ export const MemberInput = ({ onSubmit, onCancel, selectedMember }: Props) => {
           setValue(value)
           setIsTouched(true)
         }}
+        autoFocus
         maxLength={MAX_MEMBER_NAME_LENGTH}
         variant="bordered"
         radius="sm"
         isClearable
+        onKeyDown={(event) => {
+          if (event.key === 'Escape') onCancel()
+        }}
       />
       <Button isIconOnly variant="flat" type="submit" radius="sm">
         <CheckIcon className="w-5 h-5" />

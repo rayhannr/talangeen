@@ -1,6 +1,6 @@
-import { createStore } from 'jotai'
+import { atom, createStore } from 'jotai'
 import { atomWithStorage } from 'jotai/utils'
-import { Member } from './models'
+import { Member, Transaction } from './models'
 
 export const store = createStore()
 
@@ -24,3 +24,17 @@ const storageConfig = {
 
 // @ts-ignore
 export const membersAtom = atomWithStorage<Member[]>('talangeen-members', [], storageConfig, { getOnInit: true })
+// @ts-ignore
+export const membersMapAtom = atom<Map<string, string>>((get) => {
+  const members = get(membersAtom) as Member[]
+  const membersMap = new Map<string, string>()
+
+  members.forEach((member) => {
+    membersMap.set(member.id, member.name)
+  })
+
+  return membersMap
+})
+
+// @ts-ignore
+export const transactionsAtom = atomWithStorage<Transaction[]>('talangeen-transactions', [], storageConfig, { getOnInit: true })
