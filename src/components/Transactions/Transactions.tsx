@@ -1,11 +1,15 @@
 import { Button } from '@nextui-org/button'
 import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal'
 import { Tooltip } from '@nextui-org/tooltip'
+import { useAtomValue } from 'jotai'
 import PlusIcon from '@heroicons/react/24/outline/PlusIcon'
 import { TransactionForm } from './TransactionForm'
+import { transactionsAtom } from '../../stores'
+import { TransactionsList } from './TransactionsList'
 
 export const Transactions = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const transactions = useAtomValue(transactionsAtom)
 
   return (
     <div className="flex-grow">
@@ -17,6 +21,9 @@ export const Transactions = () => {
           </Button>
         </Tooltip>
       </div>
+
+      {!transactions.length && <p className="text-center opacity-80 dark:opacity-60">Belum ada transaksi</p>}
+      <TransactionsList />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
         <ModalContent>
           {(onClose) => (

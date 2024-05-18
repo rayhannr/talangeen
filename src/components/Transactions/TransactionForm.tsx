@@ -1,7 +1,7 @@
 import { Key } from 'react'
 import { Select, SelectItem } from '@nextui-org/select'
-import { useAtomValue } from 'jotai'
-import { membersAtom } from '../../stores'
+import { useAtomValue, useSetAtom } from 'jotai'
+import { membersAtom, transactionsAtom } from '../../stores'
 import { Autocomplete, AutocompleteItem } from '@nextui-org/autocomplete'
 import { Transaction, TransactionType } from '../../stores/models'
 import { useSimpleReducer } from '../../hooks/reducer'
@@ -21,6 +21,8 @@ interface Props {
 
 export const TransactionForm = ({ onClose }: Props) => {
   const members = useAtomValue(membersAtom)
+  const setTransactions = useSetAtom(transactionsAtom)
+
   const [form, setForm] = useSimpleReducer<FormInput>({
     giver: '',
     receivers: [],
@@ -40,8 +42,15 @@ export const TransactionForm = ({ onClose }: Props) => {
 
   const isGiverValid = !!form.giver?.trim() || !touched.giver
   const isReceiversValid = !!form.receivers?.length || !touched.receivers
-  const isAmountValid = /^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) || form.amount > 0 || !touched.amount
+  const isAmountValid = (/^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) && form.amount > 0) || !touched.amount
   const isNoteValid = !!form.note?.trim() || !touched.note
+
+  const isAllValid = () =>
+    !!form.giver?.trim() &&
+    !!form.receivers?.length &&
+    /^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) &&
+    form.amount > 0 &&
+    !!form.note?.trim()
 
   const onGiverChange = (value: Key | null) => {
     const giver = value as string
@@ -79,6 +88,21 @@ export const TransactionForm = ({ onClose }: Props) => {
 
     if (type === 'one-for-one') return `Yang ditalangin masing-masing dapet ${amountPerReceiver}`
     return `Yang ditalangin masing-masing dapet ${form.amount.toLocaleString()} / ${receiversTotal} = ${amountPerReceiver}`
+  }
+
+  const onSubmit = () => {
+    setTouched({ giver: true, receivers: true, note: true, amount: true, type: true })
+    if (!isAllValid()) return
+
+    setTransactions((transactions) => [
+      {
+        ...form,
+        id: crypto.randomUUID(),
+        createdAt: new Date().toISOString(),
+      },
+      ...(transactions as Transaction[]),
+    ])
+    onClose()
   }
 
   return (
@@ -193,7 +217,7 @@ export const TransactionForm = ({ onClose }: Props) => {
         <Button color="danger" radius="sm" variant="light" onPress={onClose}>
           Batal
         </Button>
-        <Button variant="flat" radius="sm" onPress={onClose} isDisabled={!isGiverValid || !isReceiversValid}>
+        <Button variant="flat" radius="sm" onPress={onSubmit} isDisabled={!isGiverValid || !isReceiversValid}>
           Tambah
         </Button>
       </ModalFooter>
