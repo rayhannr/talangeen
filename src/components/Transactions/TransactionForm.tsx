@@ -3,10 +3,12 @@ import { Select, SelectItem } from '@nextui-org/select'
 import { useAtomValue } from 'jotai'
 import { membersAtom } from '../../stores'
 import { Autocomplete, AutocompleteItem } from '@nextui-org/autocomplete'
-import { Transaction } from '../../stores/models'
+import { Transaction, TransactionType } from '../../stores/models'
 import { useSimpleReducer } from '../../hooks/reducer'
 import { ModalBody, ModalFooter } from '@nextui-org/modal'
 import { Button } from '@nextui-org/button'
+import { Radio, RadioGroup } from '@nextui-org/radio'
+import { Input, Textarea } from '@nextui-org/input'
 
 type FormInput = Omit<Transaction, 'id' | 'createdAt'>
 type Touched = {
@@ -38,6 +40,8 @@ export const TransactionForm = ({ onClose }: Props) => {
 
   const isGiverValid = !!form.giver?.trim() || !touched.giver
   const isReceiversValid = !!form.receivers?.length || !touched.receivers
+  const isAmountValid = /^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) || form.amount > 0 || !touched.amount
+  const isNoteValid = !!form.note?.trim() || !touched.note
 
   const onGiverChange = (value: Key | null) => {
     const giver = value as string
@@ -48,6 +52,33 @@ export const TransactionForm = ({ onClose }: Props) => {
   const onReceiversChange = (values: 'all' | Set<Key>) => {
     const receivers = [...values] as string[]
     setForm({ receivers })
+  }
+
+  const onTypeChange = (type: string) => {
+    setForm({ type: type as TransactionType })
+  }
+
+  const onAmountChange = (value: string) => {
+    setTouched({ amount: true })
+    const amount = +value
+    setForm({ amount })
+  }
+
+  const onNoteChange = (note: string) => {
+    setTouched({ note: true })
+    setForm({ note })
+  }
+
+  const getAmountDescription = (type: TransactionType) => {
+    const receiversTotal = form.receivers.length
+    if (receiversTotal <= 1) return ''
+
+    const amountPerReceiver = (
+      type === 'one-for-one' ? form.amount : +(form.amount / receiversTotal).toFixed(3)
+    ).toLocaleString()
+
+    if (type === 'one-for-one') return `Yang ditalangin masing-masing dapet ${amountPerReceiver}`
+    return `Yang ditalangin masing-masing dapet ${form.amount.toLocaleString()} / ${receiversTotal} = ${amountPerReceiver}`
   }
 
   return (
@@ -90,6 +121,7 @@ export const TransactionForm = ({ onClose }: Props) => {
             isInvalid={!isReceiversValid}
             errorMessage={!isReceiversValid && 'Harus ada yang ditalangin'}
             onClose={() => setTouched({ receivers: true })}
+            classNames={{ value: !!form.receivers.length && 'text-foreground' }}
           >
             {(member) => (
               <SelectItem key={member.id} value={member.id}>
@@ -97,6 +129,64 @@ export const TransactionForm = ({ onClose }: Props) => {
               </SelectItem>
             )}
           </Select>
+
+          <Input
+            type="number"
+            label="Nominal"
+            placeholder="e.g. 14000"
+            radius="sm"
+            labelPlacement="outside"
+            variant="bordered"
+            value={String(form.amount)}
+            isRequired
+            isInvalid={!isAmountValid}
+            errorMessage={!isAmountValid && 'Nominal harus berupa angka yang lebih besar dari 0'}
+            onValueChange={onAmountChange}
+          />
+
+          {form.receivers.length > 1 && (
+            <RadioGroup
+              label="Tipe Talangan"
+              orientation="horizontal"
+              isRequired
+              classNames={{ label: 'text-foreground text-sm' }}
+              value={form.type}
+              onValueChange={onTypeChange}
+            >
+              <Radio
+                value="one-for-one"
+                classNames={{ label: 'text-sm mr-6' }}
+                description={getAmountDescription('one-for-one')}
+              >
+                Satu untuk satu
+              </Radio>
+              <Radio value="one-for-all" classNames={{ label: 'text-sm' }} description={getAmountDescription('one-for-all')}>
+                Satu untuk semua
+              </Radio>
+            </RadioGroup>
+          )}
+          <Input
+            label="Tujuan"
+            placeholder="e.g. Tiket masuk Obelix Sea View"
+            radius="sm"
+            labelPlacement="outside"
+            variant="bordered"
+            value={form.note}
+            isRequired
+            isInvalid={!isNoteValid}
+            errorMessage={!isNoteValid && 'Tujuan harus diisi biar jelas duit talangan buat apaan'}
+            onValueChange={onNoteChange}
+          />
+
+          <Textarea
+            label="Deskripsi"
+            placeholder="e.g. Mahal tapi pemandangannya bagus heheh"
+            radius="sm"
+            variant="bordered"
+            labelPlacement="outside"
+            value={form.description}
+            onValueChange={(description) => setForm({ description })}
+          />
         </div>
       </ModalBody>
       <ModalFooter>

@@ -10,7 +10,7 @@ function App() {
       <Nav />
       <Main>
         <Hero />
-        <div className="flex flex-wrap gap-8 my-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 my-8">
           <Members />
           <Transactions />
         </div>

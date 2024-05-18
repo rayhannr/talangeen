@@ -3,6 +3,8 @@ export interface Member {
   name: string
 }
 
+export type TransactionType = 'one-for-one' | 'one-for-all'
+
 export interface Transaction {
   id: string
   giver: string
@@ -10,6 +12,6 @@ export interface Transaction {
   note: string
   description?: string
   amount: number
-  type: 'one-for-one' | 'one-for-many'
+  type: TransactionType
   createdAt: string
 }
