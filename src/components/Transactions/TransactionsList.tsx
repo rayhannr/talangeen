@@ -20,7 +20,7 @@ export const TransactionsList = () => {
   }
 
   return (
-    <Accordion isCompact variant="splitted" defaultExpandedKeys={[transactions[0].id]}>
+    <Accordion isCompact variant="splitted" defaultExpandedKeys={[transactions[0]?.id]}>
       {transactions.map((transaction) => (
         <AccordionItem
           key={transaction.id}
