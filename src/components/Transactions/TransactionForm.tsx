@@ -1,7 +1,7 @@
 import { Key } from 'react'
 import { Select, SelectItem } from '@nextui-org/select'
 import { useAtomValue, useSetAtom } from 'jotai'
-import { membersAtom, transactionsAtom } from '../../stores'
+import { membersAtom, membersMapAtom, transactionsAtom } from '../../stores'
 import { Autocomplete, AutocompleteItem } from '@nextui-org/autocomplete'
 import { Transaction, TransactionType } from '../../stores/models'
 import { useSimpleReducer } from '../../hooks/reducer'
@@ -17,19 +17,27 @@ type Touched = {
 
 interface Props {
   onClose: () => void
+  transaction?: Transaction
 }
 
-export const TransactionForm = ({ onClose }: Props) => {
+const DEFAULT_FORM: FormInput = {
+  giver: '',
+  receivers: [],
+  note: '',
+  description: '',
+  amount: 0,
+  type: 'one-for-one',
+}
+
+export const TransactionForm = ({ onClose, transaction }: Props) => {
   const members = useAtomValue(membersAtom)
+  const membersMap = useAtomValue(membersMapAtom)
   const setTransactions = useSetAtom(transactionsAtom)
 
   const [form, setForm] = useSimpleReducer<FormInput>({
-    giver: '',
-    receivers: [],
-    note: '',
-    description: '',
-    amount: 0,
-    type: 'one-for-one',
+    ...DEFAULT_FORM,
+    ...transaction,
+    receivers: transaction?.receivers?.filter((receiver) => [...membersMap.keys()].includes(receiver)) || [],
   })
   const [touched, setTouched] = useSimpleReducer<Touched>({
     giver: false,
@@ -98,15 +106,31 @@ export const TransactionForm = ({ onClose }: Props) => {
     setTouched({ giver: true, receivers: true, note: true, amount: true, type: true })
     if (!isAllValid()) return
 
-    setTransactions((transactions) => [
-      {
-        ...form,
-        type: form.receivers.length <= 1 ? 'one-for-one' : form.type,
-        id: crypto.randomUUID(),
-        createdAt: new Date().toISOString(),
-      },
-      ...(transactions as Transaction[]),
-    ])
+    const type = form.receivers.length <= 1 ? 'one-for-one' : form.type
+
+    if (!transaction) {
+      setTransactions((transactions) => [
+        {
+          ...form,
+          type,
+          id: crypto.randomUUID(),
+          createdAt: new Date().toISOString(),
+        },
+        ...(transactions as Transaction[]),
+      ])
+    } else {
+      setTransactions((transactions) => {
+        const clonedTransactions = structuredClone(transactions as Transaction[])
+        const editedIndex = clonedTransactions.findIndex((t) => t.id === transaction.id)
+        clonedTransactions[editedIndex] = {
+          ...clonedTransactions[editedIndex],
+          ...form,
+          type,
+        }
+
+        return clonedTransactions
+      })
+    }
     onClose()
   }
 
