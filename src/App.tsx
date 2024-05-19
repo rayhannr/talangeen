@@ -2,6 +2,7 @@ import { Hero } from './components/Hero'
 import { Main } from './components/Main'
 import { Members } from './components/Members/Members'
 import { Nav } from './components/Nav'
+import { Result } from './components/Result/Result'
 import { Transactions } from './components/Transactions/Transactions'
 
 function App() {
@@ -14,6 +15,7 @@ function App() {
           <Members />
           <Transactions />
         </div>
+        <Result />
       </Main>
     </>
   )
