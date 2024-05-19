@@ -1,11 +1,13 @@
+import { useState } from 'react'
 import { Card, CardBody } from '@nextui-org/card'
 import { useSetAtom } from 'jotai'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover'
+import { Tooltip } from '@nextui-org/tooltip'
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
 import PencilSquareIcon from '@heroicons/react/24/outline/PencilSquareIcon'
 import { Member } from '../../stores/models'
 import { membersAtom } from '../../stores'
 import { Button } from '@nextui-org/button'
-import { useState } from 'react'
 import { MemberInput } from './MemberInput'
 
 interface Props {
@@ -15,9 +17,11 @@ interface Props {
 export const MemberCard = ({ member }: Props) => {
   const setMembers = useSetAtom(membersAtom)
   const [isEditing, setIsEditing] = useState(false)
+  const [isDeleting, setIsDeleting] = useState(false)
 
   const removeMember = (member: Member) => {
     setMembers((members) => (members as Member[]).filter((m) => m.id !== member.id))
+    setIsDeleting(false)
   }
 
   const editMember = (editedMember: Member) => {
@@ -41,12 +45,40 @@ export const MemberCard = ({ member }: Props) => {
         <div className="flex justify-between items-center">
           {member.name}
           <div className="flex">
-            <Button isIconOnly size="sm" variant="light" onClick={() => setIsEditing(true)}>
-              <PencilSquareIcon className="w-5 h-5" />
-            </Button>
-            <Button isIconOnly size="sm" variant="light" onClick={() => removeMember(member)}>
-              <TrashIcon className="w-5 h-5" />
-            </Button>
+            <Tooltip content="Edit">
+              <Button isIconOnly size="sm" variant="light" onClick={() => setIsEditing(true)}>
+                <PencilSquareIcon className="w-5 h-5" />
+              </Button>
+            </Tooltip>
+            <Popover
+              isOpen={isDeleting}
+              onOpenChange={setIsDeleting}
+              placement="bottom"
+              showArrow
+              classNames={{ content: 'max-w-80' }}
+              backdrop="opaque"
+            >
+              <PopoverTrigger>
+                <Button isIconOnly size="sm" variant="light">
+                  <Tooltip content="Hapus">
+                    <TrashIcon className="w-5 h-5" />
+                  </Tooltip>
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent>
+                <div className="text-left">
+                  Transaksi yang melibatkan anggota ini gak kehapus, tapi jadi gajelas siapa nalangin siapa.
+                  <br />
+                  <br />
+                  <div className="flex justify-between items-center">
+                    Yakin masih mau hapus?
+                    <Button size="sm" variant="flat" color="danger" onClick={() => removeMember(member)}>
+                      Hapus
+                    </Button>
+                  </div>
+                </div>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </CardBody>
