@@ -42,7 +42,7 @@ export const Result = () => {
       <div className="flex justify-between gap-5 items-center mb-2">
         <p className="font-bold">Hasil</p>
         <div className="flex items-center justify-end gap-2">
-          {isUpdated && bailouts.size && (
+          {isUpdated && !!bailouts.size && (
             <span className="opacity-80 dark:opacity-60 text-sm text-pretty">
               Ada perubahan data anggota atau transaksi. Silakan hitung ulang.
             </span>
