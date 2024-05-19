@@ -37,7 +37,8 @@ export const TransactionForm = ({ onClose, transaction }: Props) => {
   const [form, setForm] = useSimpleReducer<FormInput>({
     ...DEFAULT_FORM,
     ...transaction,
-    receivers: transaction?.receivers?.filter((receiver) => [...membersMap.keys()].includes(receiver)) || [],
+    giver: membersMap.has(transaction?.giver || '') ? transaction?.giver! : '',
+    receivers: transaction?.receivers?.filter((receiver) => membersMap.has(receiver)) || [],
   })
   const [touched, setTouched] = useSimpleReducer<Touched>({
     giver: false,
@@ -227,6 +228,7 @@ export const TransactionForm = ({ onClose, transaction }: Props) => {
             value={form.note}
             isRequired
             isInvalid={!isNoteValid}
+            maxLength={100}
             errorMessage={!isNoteValid && 'Tujuan harus diisi biar jelas duit talangan buat apaan'}
             onValueChange={onNoteChange}
           />
@@ -239,6 +241,7 @@ export const TransactionForm = ({ onClose, transaction }: Props) => {
             labelPlacement="outside"
             value={form.description}
             onValueChange={(description) => setForm({ description })}
+            maxLength={256}
           />
         </div>
       </ModalBody>

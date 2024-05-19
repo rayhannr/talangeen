@@ -1,14 +1,17 @@
-import { useAtomValue } from 'jotai'
+import { useState } from 'react'
+import { useAtomValue, useSetAtom } from 'jotai'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { Tooltip } from '@nextui-org/tooltip'
 import { Button } from '@nextui-org/button'
 import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal'
 import PencilSquareIcon from '@heroicons/react/24/outline/PencilSquareIcon'
-import { membersMapAtom } from '../../stores'
+import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
+import { membersMapAtom, transactionsAtom } from '../../stores'
 import { Transaction } from '../../stores/models'
 import { getMemberName } from '../../utils/member'
 import { getReceiversName, getTotalAmount, getTypeDescription } from '../../utils/transaction'
 import { TransactionForm } from './TransactionForm'
+import { Popover, PopoverContent, PopoverTrigger } from '@nextui-org/popover'
 
 interface Props {
   transaction: Transaction
@@ -16,7 +19,14 @@ interface Props {
 
 export const TransactionDetail = ({ transaction }: Props) => {
   const membersMap = useAtomValue(membersMapAtom)
+  const setTransactions = useSetAtom(transactionsAtom)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isDeleting, setIsDeleting] = useState(false)
+
+  const removeTransaction = () => {
+    setTransactions((transactions) => (transactions as Transaction[]).filter((t) => t.id !== transaction.id))
+    setIsDeleting(false)
+  }
 
   return (
     <>
@@ -77,13 +87,39 @@ export const TransactionDetail = ({ transaction }: Props) => {
                     <PencilSquareIcon className="w-5 h-5" />
                   </Button>
                 </Tooltip>
+
+                <Popover
+                  isOpen={isDeleting}
+                  onOpenChange={setIsDeleting}
+                  placement="bottom"
+                  showArrow
+                  classNames={{ content: 'max-w-80' }}
+                  backdrop="opaque"
+                  radius="sm"
+                >
+                  <PopoverTrigger>
+                    <Button isIconOnly size="sm" variant="light">
+                      <Tooltip content="Hapus">
+                        <TrashIcon className="w-5 h-5" />
+                      </Tooltip>
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent>
+                    <div className="flex justify-between items-center gap-4">
+                      Yakin mau hapus transaksi ini?
+                      <Button size="sm" variant="flat" color="danger" onClick={removeTransaction}>
+                        Hapus
+                      </Button>
+                    </div>
+                  </PopoverContent>
+                </Popover>
               </div>
             </TableCell>
           </TableRow>
         </TableBody>
       </Table>
 
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
         <ModalContent>
           {(onClose) => (
             <>
