@@ -36,7 +36,7 @@ export const Members = () => {
 
   return (
     <div className="flex-grow">
-      <div className="flex flex-wrap justify-between items-center mb-2">
+      <div className="flex flex-wrap justify-between items-center mb-2 px-2">
         <p className="font-bold">
           Anggota ({members.length}/{MAX_MEMBER_COUNT})
         </p>
@@ -63,42 +63,42 @@ export const Members = () => {
         </div>
       </div>
 
-      <div className="flex flex-col gap-2 mb-2">
-        {isSearching && (
-          <>
-            <div className="flex items-center gap-1">
-              <Input
-                radius="sm"
-                variant="bordered"
-                className="my-2"
-                placeholder="Cari anggota"
-                value={keyword}
-                onValueChange={setKeyword}
-                autoFocus
-                endContent={<MagnifyingGlassIcon className="w-5 h-5" />}
-                onKeyDown={(event) => {
-                  if (event.key === 'Escape') resetSearch()
-                }}
-              />
-              <Button isIconOnly variant="flat" onClick={resetSearch} radius="sm">
-                <XMarkIcon className="w-5 h-5" />
-              </Button>
-            </div>
-            {!filteredMembers.length && (
-              <p className="text-center opacity-80 dark:opacity-60">Cari anggota pake keyword lain!</p>
-            )}
-          </>
-        )}
-        {!members.length && !isAdding && <p className="text-center opacity-80 dark:opacity-60">Belum ada anggota</p>}
-        {isAdding && <MemberInput onSubmit={addMember} onCancel={() => setIsAdding(false)} />}
-        <ScrollShadow className="max-h-96 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-neutral-800 scrollbar-thumb-rounded-full scrollbar-track-transparent">
+      <ScrollShadow className="max-h-96 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-neutral-800 scrollbar-thumb-rounded-full scrollbar-track-transparent">
+        <div className="flex flex-col gap-2 mb-2 mx-2">
+          {isSearching && (
+            <>
+              <div className="flex items-center gap-1">
+                <Input
+                  radius="sm"
+                  variant="bordered"
+                  className="my-2"
+                  placeholder="Cari anggota"
+                  value={keyword}
+                  onValueChange={setKeyword}
+                  autoFocus
+                  endContent={<MagnifyingGlassIcon className="w-5 h-5" />}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Escape') resetSearch()
+                  }}
+                />
+                <Button isIconOnly variant="flat" onClick={resetSearch} radius="sm">
+                  <XMarkIcon className="w-5 h-5" />
+                </Button>
+              </div>
+              {!filteredMembers.length && (
+                <p className="text-center opacity-80 dark:opacity-60">Cari anggota pake keyword lain!</p>
+              )}
+            </>
+          )}
+          {!members.length && !isAdding && <p className="text-center opacity-80 dark:opacity-60">Belum ada anggota</p>}
+          {isAdding && <MemberInput onSubmit={addMember} onCancel={() => setIsAdding(false)} />}
           <div className="flex flex-col gap-2">
             {filteredMembers.map((member) => (
               <MemberCard key={member.id} member={member} />
             ))}
           </div>
-        </ScrollShadow>
-      </div>
+        </div>
+      </ScrollShadow>
     </div>
   )
 }

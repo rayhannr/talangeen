@@ -57,6 +57,7 @@ export const MemberCard = ({ member }: Props) => {
               showArrow
               classNames={{ content: 'max-w-80' }}
               backdrop="opaque"
+              radius="sm"
             >
               <PopoverTrigger>
                 <Button isIconOnly size="sm" variant="light">

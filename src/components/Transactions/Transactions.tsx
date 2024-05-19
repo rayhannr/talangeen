@@ -13,7 +13,7 @@ export const Transactions = () => {
 
   return (
     <div className="flex-grow">
-      <div className="flex flex-wrap justify-between items-center mb-2">
+      <div className="flex flex-wrap justify-between items-center mb-2 px-2">
         <p className="font-bold">Transaksi</p>
         <Tooltip content="Tambah transaksi">
           <Button isIconOnly variant="flat" isDisabled={isOpen} onClick={onOpen} radius="sm">
@@ -24,7 +24,7 @@ export const Transactions = () => {
 
       {!transactions.length && <p className="text-center opacity-80 dark:opacity-60">Belum ada transaksi</p>}
       <TransactionsList />
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
         <ModalContent>
           {(onClose) => (
             <>
