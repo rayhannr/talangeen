@@ -91,7 +91,7 @@ export const Members = () => {
         )}
         {!members.length && !isAdding && <p className="text-center opacity-80 dark:opacity-60">Belum ada anggota</p>}
         {isAdding && <MemberInput onSubmit={addMember} onCancel={() => setIsAdding(false)} />}
-        <ScrollShadow className="max-h-64 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-neutral-800 scrollbar-thumb-rounded-full scrollbar-track-transparent">
+        <ScrollShadow className="max-h-96 scrollbar-thin scrollbar-thumb-gray-200 dark:scrollbar-thumb-neutral-800 scrollbar-thumb-rounded-full scrollbar-track-transparent">
           <div className="flex flex-col gap-2">
             {filteredMembers.map((member) => (
               <MemberCard key={member.id} member={member} />

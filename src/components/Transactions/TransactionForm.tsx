@@ -82,12 +82,16 @@ export const TransactionForm = ({ onClose }: Props) => {
     const receiversTotal = form.receivers.length
     if (receiversTotal <= 1) return ''
 
+    const formattedAmount = form.amount.toLocaleString()
     const amountPerReceiver = (
       type === 'one-for-one' ? form.amount : +(form.amount / receiversTotal).toFixed(3)
     ).toLocaleString()
 
-    if (type === 'one-for-one') return `Yang ditalangin masing-masing dapet ${amountPerReceiver}`
-    return `Yang ditalangin masing-masing dapet ${form.amount.toLocaleString()} / ${receiversTotal} = ${amountPerReceiver}`
+    if (type === 'one-for-one')
+      return `Yang ditalangin masing-masing dapet ${formattedAmount}, jadi totalnya ${(
+        form.amount * receiversTotal
+      ).toLocaleString()}`
+    return `Yang ditalangin masing-masing dapet ${formattedAmount} / ${receiversTotal} = ${amountPerReceiver}`
   }
 
   const onSubmit = () => {
@@ -97,6 +101,7 @@ export const TransactionForm = ({ onClose }: Props) => {
     setTransactions((transactions) => [
       {
         ...form,
+        type: form.receivers.length <= 1 ? 'one-for-one' : form.type,
         id: crypto.randomUUID(),
         createdAt: new Date().toISOString(),
       },
