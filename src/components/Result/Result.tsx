@@ -4,7 +4,7 @@ import { Tooltip } from '@nextui-org/tooltip'
 import { useAtomValue } from 'jotai'
 import CalculatorIcon from '@heroicons/react/24/outline/CalculatorIcon'
 import { twMerge } from 'tailwind-merge'
-import { membersAtom, store, transactionsAtom } from '../../stores'
+import { store, transactionsAtom } from '../../stores'
 import { getBailoutResult } from '../../utils/bailout'
 import { BailoutTable } from './BailoutTable'
 
@@ -24,16 +24,15 @@ export const Result = () => {
       setIsUpdated(true)
     }
 
-    const unsubMembers = store.sub(membersAtom, update)
     const unsubTransactions = store.sub(transactionsAtom, update)
 
     return () => {
-      unsubMembers()
       unsubTransactions()
     }
   }, [])
 
   useEffect(() => {
+    if (!bailouts.size) return
     window.scrollBy({ top: 200, behavior: 'smooth' })
   }, [bailouts.size])
 
