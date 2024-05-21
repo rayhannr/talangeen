@@ -4,8 +4,11 @@ import { getMemberName } from './member'
 export const getTotalAmount = (transaction: Transaction) => {
   const formattedAmount = transaction.amount.toLocaleString()
   const receiversTotal = transaction.receivers.length
+
+  if (receiversTotal <= 1) return formattedAmount
+
   const amount =
-    transaction.type === 'one-for-all' || receiversTotal <= 1 ? formattedAmount : `${formattedAmount} x ${receiversTotal}`
+    transaction.type === 'one-for-all' ? `${formattedAmount} / ${receiversTotal}` : `${formattedAmount} x ${receiversTotal}`
 
   return amount
 }
@@ -14,7 +17,7 @@ export const getTypeDescription = (transaction: Transaction) => {
   const amount =
     transaction.type === 'one-for-one'
       ? transaction.amount.toLocaleString()
-      : (transaction.amount / transaction.receivers.length).toLocaleString()
+      : Math.round(transaction.amount / transaction.receivers.length).toLocaleString()
   return `Yang ditalangin masing-masing dapet ${amount}`
 }
 
