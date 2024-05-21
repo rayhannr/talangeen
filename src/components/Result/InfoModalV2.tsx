@@ -9,7 +9,7 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
   return (
     <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
       <ModalContent>
-        <ModalHeader className="flex flex-col gap-1">Versi 1</ModalHeader>
+        <ModalHeader className="flex flex-col gap-1">Versi 2</ModalHeader>
         <ModalBody>
           <p>Misal ada anggota A, B, C, sama D. Mereka saling menalangi dengan rincian kek gini</p>
           <ul className="list-disc list-inside">
