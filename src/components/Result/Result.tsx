@@ -1,18 +1,24 @@
 import { useEffect, useState } from 'react'
 import { Button } from '@nextui-org/button'
 import { Tooltip } from '@nextui-org/tooltip'
+import { Tab, Tabs } from '@nextui-org/tabs'
 import { useAtomValue } from 'jotai'
 import CalculatorIcon from '@heroicons/react/24/outline/CalculatorIcon'
+import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon'
 import { store, transactionsAtom } from '../../stores'
 import { getBailoutResult, getBailoutResultV2 } from '../../utils/bailout'
 import { BailoutTable } from './BailoutTable'
-import { Tab, Tabs } from '@nextui-org/tabs'
+import { useDisclosure } from '@nextui-org/modal'
+import { InfoModalV1 } from './InfoModalV1'
+import { InfoModalV2 } from './InfoModalV2'
 
 export const Result = () => {
   const transactions = useAtomValue(transactionsAtom)
+  const { isOpen, onOpen, onOpenChange } = useDisclosure()
   const [bailoutsV1, setBailoutsV1] = useState<Map<string, number>>(new Map())
   const [bailoutsV2, setBailoutsV2] = useState<Map<string, number>>(new Map())
   const [isUpdated, setIsUpdated] = useState(false)
+  const [selectedTab, setSelectedTab] = useState('1')
 
   const generateResult = () => {
     setIsUpdated(false)
@@ -57,14 +63,22 @@ export const Result = () => {
           </Tooltip>
         </div>
       </div>
-      <Tabs>
-        <Tab key="1" title="Versi 1">
-          <BailoutTable bailouts={bailoutsV1} />
-        </Tab>
-        <Tab key="2" title="Versi 2">
-          <BailoutTable bailouts={bailoutsV2} />
-        </Tab>
-      </Tabs>
+
+      <div className="flex gap-2">
+        <Tabs selectedKey={selectedTab} disableAnimation onSelectionChange={(tab) => setSelectedTab(tab as string)} radius="sm">
+          <Tab key="1" title="Versi 1" />
+          <Tab key="2" title="Versi 2" />
+        </Tabs>
+        <Tooltip content="Info">
+          <Button isIconOnly radius="sm" onPress={onOpen} variant="light">
+            <InformationCircleIcon className="w-5 h-5 opacity-80 dark:opacity-60" />
+          </Button>
+        </Tooltip>
+      </div>
+      {selectedTab === '1' && <BailoutTable bailouts={bailoutsV1} />}
+      {selectedTab === '2' && <BailoutTable bailouts={bailoutsV2} />}
+      <InfoModalV1 onOpenChange={onOpenChange} isOpen={isOpen && selectedTab === '1'} />
+      <InfoModalV2 onOpenChange={onOpenChange} isOpen={isOpen && selectedTab === '2'} />
     </div>
   )
 }

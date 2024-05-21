@@ -31,13 +31,13 @@ export const ThemeToggler = () => {
   }
 
   const setInitialColorMode = (mode: string) => {
-    let color = '#f1f5f9'
+    let color = '#f8fafc'
 
     if (mode === LIGHT_THEME) {
       root.classList.remove(DARK_THEME_CLASS)
     } else {
       root.classList.add(DARK_THEME_CLASS)
-      color = '#0f172a'
+      color = '#0c0a09'
     }
     metaThemeColor?.setAttribute('content', color)
   }
