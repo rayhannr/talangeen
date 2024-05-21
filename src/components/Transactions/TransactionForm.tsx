@@ -18,6 +18,7 @@ type Touched = {
 interface Props {
   onClose: () => void
   transaction?: Transaction
+  isEdit?: boolean
 }
 
 const DEFAULT_FORM: FormInput = {
@@ -29,7 +30,7 @@ const DEFAULT_FORM: FormInput = {
   type: 'one-for-one',
 }
 
-export const TransactionForm = ({ onClose, transaction }: Props) => {
+export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
   const members = useAtomValue(membersAtom)
   const membersMap = useAtomValue(membersMapAtom)
   const setTransactions = useSetAtom(transactionsAtom)
@@ -92,14 +93,13 @@ export const TransactionForm = ({ onClose, transaction }: Props) => {
     if (receiversTotal <= 1) return ''
 
     const formattedAmount = form.amount.toLocaleString()
-    const amountPerReceiver = (
-      type === 'one-for-one' ? form.amount : +(form.amount / receiversTotal).toFixed(3)
-    ).toLocaleString()
+    const amountPerReceiver = (type === 'one-for-one' ? form.amount : Math.round(form.amount / receiversTotal)).toLocaleString()
 
     if (type === 'one-for-one')
       return `Yang ditalangin masing-masing dapet ${formattedAmount}, jadi totalnya ${(
         form.amount * receiversTotal
       ).toLocaleString()}`
+
     return `Yang ditalangin masing-masing dapet ${formattedAmount} / ${receiversTotal} = ${amountPerReceiver}`
   }
 
@@ -250,7 +250,7 @@ export const TransactionForm = ({ onClose, transaction }: Props) => {
           Batal
         </Button>
         <Button variant="flat" radius="sm" onPress={onSubmit} isDisabled={!isGiverValid || !isReceiversValid}>
-          Tambah
+          {isEdit ? 'Edit' : 'Tambah'}
         </Button>
       </ModalFooter>
     </>

@@ -124,7 +124,7 @@ export const TransactionDetail = ({ transaction }: Props) => {
           {(onClose) => (
             <>
               <ModalHeader>Edit Transaksi</ModalHeader>
-              <TransactionForm onClose={onClose} transaction={transaction} />
+              <TransactionForm onClose={onClose} transaction={transaction} isEdit />
             </>
           )}
         </ModalContent>
