@@ -17,12 +17,13 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
             <li>B nalangin A 2000</li>
             <li>B nalangin A sama D masing-masing 7500</li>
             <li>C nalangin B 3000</li>
+            <li>C nalangin A 4000</li>
           </ul>
           <p>Kita akumulasiin duit talangan per orang, ketemu hasilnya kek di bawah ini</p>
           <ul className="list-disc list-inside">
-            <li>A -4500</li>
+            <li>A -8500</li>
             <li>B +14000</li>
-            <li>C -2000</li>
+            <li>C +2000</li>
             <li>D -7500</li>
           </ul>
           <p>
@@ -34,9 +35,9 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
             talangan yang harus dibalikin dari siapa ke siapa. Kira-kira rinciannya gini
           </p>
           <ul className="list-disc list-inside">
-            <li>A balikin duit ke B 4500</li>
-            <li>C balikin duit ke B 2000</li>
-            <li>D balikin duit ke B 7500</li>
+            <li>A balikin duit ke B 8500</li>
+            <li>D balikin duit ke B 5500</li>
+            <li>D balikin duit ke C 2000</li>
           </ul>
         </ModalBody>
       </ModalContent>

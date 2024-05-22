@@ -6,6 +6,7 @@ import PlusIcon from '@heroicons/react/24/outline/PlusIcon'
 import { TransactionForm } from './TransactionForm'
 import { transactionsAtom } from '../../stores'
 import { TransactionsList } from './TransactionsList'
+import { ResetData } from '../ResetData'
 
 export const Transactions = () => {
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -21,9 +22,9 @@ export const Transactions = () => {
           </Button>
         </Tooltip>
       </div>
-
       {!transactions.length && <p className="text-center opacity-80 dark:opacity-60">Belum ada transaksi</p>}
       <TransactionsList />
+      <ResetData type="transaction" />
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
         <ModalContent>
           {(onClose) => (

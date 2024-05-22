@@ -57,7 +57,7 @@ export const Result = () => {
             </span>
           )}
           <Tooltip content="Hitung hasil">
-            <Button isIconOnly variant="flat" isDisabled={!transactions.length} onClick={generateResult} radius="sm">
+            <Button isIconOnly variant="flat" onClick={generateResult} radius="sm">
               <CalculatorIcon className="w-5 h-5" />
             </Button>
           </Tooltip>

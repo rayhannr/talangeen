@@ -13,6 +13,7 @@ import { useDebounce } from 'use-debounce'
 import { MAX_MEMBER_COUNT } from '../../constants'
 import { ScrollShadow } from '@nextui-org/scroll-shadow'
 import { Tooltip } from '@nextui-org/tooltip'
+import { ResetData } from '../ResetData'
 
 export const Members = () => {
   const [isAdding, setIsAdding] = useState(false)
@@ -99,6 +100,7 @@ export const Members = () => {
           </div>
         </div>
       </ScrollShadow>
+      <ResetData type="member" />
     </div>
   )
 }
