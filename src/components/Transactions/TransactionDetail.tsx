@@ -72,9 +72,11 @@ export const TransactionDetail = ({ transaction }: Props) => {
           <TableRow key="7">
             <TableCell>Tanggal</TableCell>
             <TableCell>
-              {new Intl.DateTimeFormat('id', {
-                dateStyle: 'full',
-              }).format(new Date(transaction.createdAt))}
+              <time dateTime={transaction.createdAt}>
+                {new Intl.DateTimeFormat('id', {
+                  dateStyle: 'full',
+                }).format(new Date(transaction.createdAt))}
+              </time>
             </TableCell>
           </TableRow>
 
