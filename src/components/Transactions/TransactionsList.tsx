@@ -1,14 +1,18 @@
 import { Accordion, AccordionItem } from '@nextui-org/accordion'
 import { useAtomValue } from 'jotai'
 import ArrowLongRightIcon from '@heroicons/react/24/outline/ArrowLongRightIcon'
-import { membersMapAtom, transactionsAtom } from '../../stores'
+import { membersMapAtom } from '../../stores'
 import { getReceiversName, getTotalAmount } from '../../utils/transaction'
 import { ScrollShadow } from '@nextui-org/scroll-shadow'
 import { TransactionDetail } from './TransactionDetail'
 import { getMemberName } from '../../utils/member'
+import { Transaction } from '../../stores/models'
 
-export const TransactionsList = () => {
-  const transactions = useAtomValue(transactionsAtom)
+interface Props {
+  transactions: Transaction[]
+}
+
+export const TransactionsList = ({ transactions }: Props) => {
   const membersMap = useAtomValue(membersMapAtom)
 
   return (
@@ -17,6 +21,7 @@ export const TransactionsList = () => {
         {transactions.map((transaction, index) => (
           <AccordionItem
             key={String(index)}
+            textValue={transaction.note}
             aria-label={transaction.note}
             className="!shadow-none border border-slate-300 dark:border-none"
             indicator={({ indicator }) => (

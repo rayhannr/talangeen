@@ -78,7 +78,6 @@ export const getBailoutResultV2 = (transactions: Transaction[]) => {
   }[] = []
 
   while (giverIndex < givers.length && receiverIndex < receivers.length) {
-    console.log(givers[giverIndex], receivers[receiverIndex], giverIndex, receiverIndex, 'ajgl')
     const giverAmount = givers[giverIndex].amount
     const receiverAmount = -receivers[receiverIndex].amount
 
