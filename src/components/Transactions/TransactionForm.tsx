@@ -157,7 +157,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
             onClose={() => setTouched({ giver: true })}
           >
             {(member) => (
-              <AutocompleteItem key={member.id} value={member.id} textValue={member.id}>
+              <AutocompleteItem key={member.id} value={member.id}>
                 {member.name}
               </AutocompleteItem>
             )}
@@ -181,7 +181,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
             classNames={{ value: !!form.receivers.length && 'text-foreground' }}
           >
             {(member) => (
-              <SelectItem key={member.id} value={member.id} textValue={member.id}>
+              <SelectItem key={member.id} value={member.id}>
                 {member.name}
               </SelectItem>
             )}

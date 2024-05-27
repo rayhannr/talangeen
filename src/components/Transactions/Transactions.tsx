@@ -120,7 +120,15 @@ export const Transactions = () => {
               onValueChange={onKeywordChange}
               className="flex-grow"
             />
-            <Button isIconOnly variant="flat" onClick={() => setIsSearching(false)} radius="sm">
+            <Button
+              isIconOnly
+              variant="flat"
+              onClick={() => {
+                setIsSearching(false)
+                setKeyword('')
+              }}
+              radius="sm"
+            >
               <XMarkIcon className="w-5 h-5" />
             </Button>
           </div>

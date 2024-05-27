@@ -11,6 +11,8 @@ import { BailoutTable } from './BailoutTable'
 import { useDisclosure } from '@nextui-org/modal'
 import { InfoModalV1 } from './InfoModalV1'
 import { InfoModalV2 } from './InfoModalV2'
+import { BailoutFilter, Filter } from './BailoutFilter'
+import { useSimpleReducer } from '../../hooks/reducer'
 
 export const Result = () => {
   const transactions = useAtomValue(transactionsAtom)
@@ -19,6 +21,7 @@ export const Result = () => {
   const [bailoutsV2, setBailoutsV2] = useState<Map<string, number>>(new Map())
   const [isUpdated, setIsUpdated] = useState(false)
   const [selectedTab, setSelectedTab] = useState('1')
+  const [filter, setFilter] = useSimpleReducer<Filter>({ giver: [], receiver: [], amount: -1 })
 
   const generateResult = () => {
     setIsUpdated(false)
@@ -75,8 +78,11 @@ export const Result = () => {
           </Button>
         </Tooltip>
       </div>
-      {selectedTab === '1' && <BailoutTable bailouts={bailoutsV1} />}
-      {selectedTab === '2' && <BailoutTable bailouts={bailoutsV2} />}
+      {(!!bailoutsV1.size || !!bailoutsV2.size) && (
+        <BailoutFilter onFilterChange={(key, value) => setFilter({ [key]: value })} />
+      )}
+      {selectedTab === '1' && <BailoutTable bailouts={bailoutsV1} filter={filter} />}
+      {selectedTab === '2' && <BailoutTable bailouts={bailoutsV2} filter={filter} />}
       <InfoModalV1 onOpenChange={onOpenChange} isOpen={isOpen && selectedTab === '1'} />
       <InfoModalV2 onOpenChange={onOpenChange} isOpen={isOpen && selectedTab === '2'} />
     </div>
