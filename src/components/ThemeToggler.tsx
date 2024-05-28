@@ -50,7 +50,6 @@ export const ThemeToggler = () => {
   return (
     <Button
       aria-label="theme toggler"
-      data-theme-toggle
       className="rounded-full border-0 p-2 transition-all hover:scale-90 active:scale-100 outline-none"
       onClick={onToggle}
       variant="light"
