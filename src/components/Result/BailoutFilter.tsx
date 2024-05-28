@@ -17,23 +17,10 @@ export const BailoutFilter = ({ onFilterChange }: Props) => {
   const members = useAtomValue(membersAtom)
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 my-4">
-      <Select
-        items={members}
-        label="Yang Nalangin"
-        placeholder="Yang Nalangin"
-        radius="sm"
-        size="sm"
-        variant="bordered"
-        selectionMode="multiple"
-        onSelectionChange={(keys) => onFilterChange('giver', [...keys] as string[])}
-      >
-        {(member) => <SelectItem key={member.id}>{member.name}</SelectItem>}
-      </Select>
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-2 mt-4">
       <Select
         items={members}
         label="Yang Ditalangin"
-        placeholder="Yang Ditalangin"
         radius="sm"
         size="sm"
         variant="bordered"
@@ -42,10 +29,20 @@ export const BailoutFilter = ({ onFilterChange }: Props) => {
       >
         {(member) => <SelectItem key={member.id}>{member.name}</SelectItem>}
       </Select>
+      <Select
+        items={members}
+        label="Yang Nalangin"
+        radius="sm"
+        size="sm"
+        variant="bordered"
+        selectionMode="multiple"
+        onSelectionChange={(keys) => onFilterChange('giver', [...keys] as string[])}
+      >
+        {(member) => <SelectItem key={member.id}>{member.name}</SelectItem>}
+      </Select>
       <Input
         label="Nominal"
         type="number"
-        placeholder="Nominal"
         radius="sm"
         size="sm"
         variant="bordered"

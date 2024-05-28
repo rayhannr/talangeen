@@ -5,6 +5,8 @@ import { Tab, Tabs } from '@nextui-org/tabs'
 import { useAtomValue } from 'jotai'
 import CalculatorIcon from '@heroicons/react/24/outline/CalculatorIcon'
 import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircleIcon'
+import AdjustmentsHorizontalIcon from '@heroicons/react/24/outline/AdjustmentsHorizontalIcon'
+import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon'
 import { store, transactionsAtom } from '../../stores'
 import { getBailoutResult, getBailoutResultV2 } from '../../utils/bailout'
 import { BailoutTable } from './BailoutTable'
@@ -14,6 +16,8 @@ import { InfoModalV2 } from './InfoModalV2'
 import { BailoutFilter, Filter } from './BailoutFilter'
 import { useSimpleReducer } from '../../hooks/reducer'
 
+const INITIAL_FILTER: Filter = { giver: [], receiver: [], amount: -1 }
+
 export const Result = () => {
   const transactions = useAtomValue(transactionsAtom)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
@@ -21,7 +25,11 @@ export const Result = () => {
   const [bailoutsV2, setBailoutsV2] = useState<Map<string, number>>(new Map())
   const [isUpdated, setIsUpdated] = useState(false)
   const [selectedTab, setSelectedTab] = useState('1')
-  const [filter, setFilter] = useSimpleReducer<Filter>({ giver: [], receiver: [], amount: -1 })
+
+  const [filter, setFilter] = useSimpleReducer<Filter>(INITIAL_FILTER)
+  const [isFiltering, setIsFiltering] = useState(false)
+
+  const isResultGenerated = !!bailoutsV1.size || !!bailoutsV2.size
 
   const generateResult = () => {
     setIsUpdated(false)
@@ -59,6 +67,28 @@ export const Result = () => {
               Ada perubahan data anggota atau transaksi. Silakan hitung ulang.
             </span>
           )}
+          {isResultGenerated && !isFiltering && (
+            <Tooltip content="Filter hasil">
+              <Button isIconOnly variant="flat" onClick={() => setIsFiltering(true)} radius="sm">
+                <AdjustmentsHorizontalIcon className="w-5 h-5" />
+              </Button>
+            </Tooltip>
+          )}
+          {isResultGenerated && isFiltering && (
+            <Tooltip content="Hapus filter">
+              <Button
+                isIconOnly
+                variant="flat"
+                onClick={() => {
+                  setIsFiltering(false)
+                  setFilter(INITIAL_FILTER)
+                }}
+                radius="sm"
+              >
+                <XMarkIcon className="w-5 h-5" />
+              </Button>
+            </Tooltip>
+          )}
           <Tooltip content="Hitung hasil">
             <Button isIconOnly variant="flat" onClick={generateResult} radius="sm">
               <CalculatorIcon className="w-5 h-5" />
@@ -78,9 +108,7 @@ export const Result = () => {
           </Button>
         </Tooltip>
       </div>
-      {(!!bailoutsV1.size || !!bailoutsV2.size) && (
-        <BailoutFilter onFilterChange={(key, value) => setFilter({ [key]: value })} />
-      )}
+      {isResultGenerated && isFiltering && <BailoutFilter onFilterChange={(key, value) => setFilter({ [key]: value })} />}
       {selectedTab === '1' && <BailoutTable bailouts={bailoutsV1} filter={filter} />}
       {selectedTab === '2' && <BailoutTable bailouts={bailoutsV2} filter={filter} />}
       <InfoModalV1 onOpenChange={onOpenChange} isOpen={isOpen && selectedTab === '1'} />
