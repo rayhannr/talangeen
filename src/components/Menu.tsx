@@ -1,37 +1,88 @@
-import { useAtomValue } from 'jotai'
+import { ChangeEvent, useState } from 'react'
+import { useAtom } from 'jotai'
 import { Button } from '@nextui-org/button'
 import { Dropdown, DropdownItem, DropdownMenu, DropdownTrigger } from '@nextui-org/dropdown'
 import { saveAs } from 'file-saver'
 import Bars3Icon from '@heroicons/react/24/outline/Bars3Icon'
 import BarsArrowUpIcon from '@heroicons/react/24/outline/BarsArrowUpIcon'
+import BarsArrowDownIcon from '@heroicons/react/24/outline/BarsArrowDownIcon'
 import { Github } from './Icons/Github'
 import { membersAtom, transactionsAtom } from '../stores'
+import { ImportData } from '../stores/models'
+import { z } from 'zod'
 
 export const Menu = () => {
-  const members = useAtomValue(membersAtom)
-  const transactions = useAtomValue(transactionsAtom)
+  const [members, setMembers] = useAtom(membersAtom)
+  const [transactions, setTransactions] = useAtom(transactionsAtom)
+  const [zodErrors, setZodErrors] = useState<z.ZodIssue[]>([])
+  const [isOpen, setIsOpen] = useState(false)
 
   const exportData = () => {
     const data = { members, transactions }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const now = new Date().toLocaleString()
     saveAs(blob, `talangeen-data_${now}.json`)
+    setIsOpen(false)
   }
+
+  const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { files } = event.target
+    if (!files?.length) return
+
+    const pickedFile = files[0]
+    const reader = new FileReader()
+    reader.onload = function (_event) {
+      const result = JSON.parse(JSON.stringify(reader.result))
+      try {
+        const importData = ImportData.safeParse(JSON.parse(result))
+        if (importData.error) {
+          setZodErrors(importData.error.errors)
+          return
+        }
+        const { members = [], transactions = [] } = importData.data
+        setMembers(members)
+        setTransactions(transactions)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+    reader.readAsText(pickedFile, 'UTF-8')
+    reader.onerror = function (_event) {
+      console.error(reader.error)
+    }
+
+    setIsOpen(false)
+    event.target.value = ''
+  }
+
   return (
-    <Dropdown>
+    <Dropdown
+      placement="bottom-end"
+      className="min-w-44"
+      radius="sm"
+      closeOnSelect={false}
+      isOpen={isOpen}
+      onOpenChange={setIsOpen}
+    >
       <DropdownTrigger>
         <Button isIconOnly variant="light" radius="full">
           <Bars3Icon className="w-5 h-5" />
         </Button>
       </DropdownTrigger>
       <DropdownMenu aria-label="static menu">
-        <DropdownItem key="issue">
+        <DropdownItem key="issue" className="text-right" textValue="Laporkan bug">
           <a href="https://github.com/rayhannr/talangeen/issues/new" target="_blank" rel="noreferrer">
-            <Github className="w-5 h-5 inline-block mr-2" /> Laporkan bug
+            Laporkan bug <Github className="w-5 h-5 inline-block ml-2" />
           </a>
         </DropdownItem>
-        <DropdownItem key="export" onPress={exportData}>
-          <BarsArrowUpIcon className="w-5 h-5 inline-block mr-2" /> Ekspor data
+        <DropdownItem key="import" className="text-right" textValue="Impor data">
+          <label className="cursor-pointer">
+            Impor data <BarsArrowDownIcon className="w-5 h-5 inline-block ml-2" />
+            <input className="sr-only" type="file" accept=".json" name="file-import" onChange={onFileChange} />
+          </label>
+        </DropdownItem>
+        <DropdownItem key="export" onPress={exportData} className="text-right" textValue="Ekspor data">
+          Ekspor data <BarsArrowUpIcon className="w-5 h-5 inline-block ml-2" />
         </DropdownItem>
       </DropdownMenu>
     </Dropdown>
