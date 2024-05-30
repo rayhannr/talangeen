@@ -34,7 +34,7 @@ export const ResetData = ({ type }: Props) => {
       <PopoverContent className="p-3">
         {`Ini bakal hapus semua data ${type === 'transaction' ? 'transaksi' : 'anggota'}. Lu yakin?`}
         <div className="w-full flex justify-end mt-3">
-          <Button size="sm" variant="flat" color="danger" onClick={reset}>
+          <Button size="sm" variant="flat" color="danger" onPress={reset}>
             Reset
           </Button>
         </div>

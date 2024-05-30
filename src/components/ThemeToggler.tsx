@@ -51,7 +51,7 @@ export const ThemeToggler = () => {
     <Button
       aria-label="theme toggler"
       className="rounded-full border-0 p-2 transition-all hover:scale-90 active:scale-100 outline-none"
-      onClick={onToggle}
+      onPress={onToggle}
       variant="light"
       isIconOnly
     >

@@ -46,7 +46,7 @@ export const MemberCard = ({ member }: Props) => {
           {member.name}
           <div className="flex">
             <Tooltip content="Edit">
-              <Button isIconOnly size="sm" variant="light" onClick={() => setIsEditing(true)}>
+              <Button isIconOnly size="sm" variant="light" onPress={() => setIsEditing(true)}>
                 <PencilSquareIcon className="w-5 h-5" />
               </Button>
             </Tooltip>
@@ -73,7 +73,7 @@ export const MemberCard = ({ member }: Props) => {
                   <br />
                   <div className="flex justify-between items-center">
                     Yakin masih mau hapus?
-                    <Button size="sm" variant="flat" color="danger" onClick={() => removeMember(member)}>
+                    <Button size="sm" variant="flat" color="danger" onPress={() => removeMember(member)}>
                       Hapus
                     </Button>
                   </div>

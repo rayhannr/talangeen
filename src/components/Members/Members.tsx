@@ -44,7 +44,7 @@ export const Members = () => {
         <div className="flex gap-1">
           {!!members.length && !isSearching && (
             <Tooltip content="Cari anggota">
-              <Button isIconOnly variant="flat" isDisabled={isAdding} onClick={() => setIsSearching(true)} radius="sm">
+              <Button isIconOnly variant="flat" isDisabled={isAdding} onPress={() => setIsSearching(true)} radius="sm">
                 <MagnifyingGlassIcon className="w-5 h-5" />
               </Button>
             </Tooltip>
@@ -55,7 +55,7 @@ export const Members = () => {
               isIconOnly
               variant="flat"
               isDisabled={isAdding || isSearching || members.length >= MAX_MEMBER_COUNT}
-              onClick={() => setIsAdding(true)}
+              onPress={() => setIsAdding(true)}
               radius="sm"
             >
               <PlusIcon className="w-5 h-5" />
@@ -82,7 +82,7 @@ export const Members = () => {
                     if (event.key === 'Escape') resetSearch()
                   }}
                 />
-                <Button isIconOnly variant="flat" onClick={resetSearch} radius="sm">
+                <Button isIconOnly variant="flat" onPress={resetSearch} radius="sm">
                   <XMarkIcon className="w-5 h-5" />
                 </Button>
               </div>

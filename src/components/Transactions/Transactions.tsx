@@ -81,13 +81,13 @@ export const Transactions = () => {
         <div className="flex gap-1">
           {!!transactions.length && !isSearching && (
             <Tooltip content="Cari transaksi">
-              <Button isIconOnly variant="flat" onClick={() => setIsSearching(true)} radius="sm">
+              <Button isIconOnly variant="flat" onPress={() => setIsSearching(true)} radius="sm">
                 <MagnifyingGlassIcon className="w-5 h-5" />
               </Button>
             </Tooltip>
           )}
           <Tooltip content="Tambah transaksi">
-            <Button isIconOnly variant="flat" isDisabled={isOpen} onClick={onOpen} radius="sm">
+            <Button isIconOnly variant="flat" isDisabled={isOpen} onPress={onOpen} radius="sm">
               <PlusIcon className="w-5 h-5" />
             </Button>
           </Tooltip>
@@ -123,7 +123,7 @@ export const Transactions = () => {
             <Button
               isIconOnly
               variant="flat"
-              onClick={() => {
+              onPress={() => {
                 setIsSearching(false)
                 setKeyword('')
               }}
