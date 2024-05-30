@@ -10,19 +10,24 @@ import { Github } from './Icons/Github'
 import { membersAtom, transactionsAtom } from '../stores'
 import { ImportData } from '../stores/models'
 import { z } from 'zod'
+import { ImportFailedModal } from './ImportFailedModal'
+import { ImportWarningModal } from './ImportWarningModal'
 
 export const Menu = () => {
   const [members, setMembers] = useAtom(membersAtom)
   const [transactions, setTransactions] = useAtom(transactionsAtom)
+
+  const [dataToImport, setDataToImport] = useState<ImportData | null>(null)
   const [zodErrors, setZodErrors] = useState<z.ZodIssue[]>([])
-  const [isOpen, setIsOpen] = useState(false)
+  const [isImportError, setIsImportError] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   const exportData = () => {
     const data = { members, transactions }
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })
     const now = new Date().toLocaleString()
     saveAs(blob, `talangeen-data_${now}.json`)
-    setIsOpen(false)
+    setIsDropdownOpen(false)
   }
 
   const onFileChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -34,57 +39,77 @@ export const Menu = () => {
     reader.onload = function (_event) {
       const result = JSON.parse(JSON.stringify(reader.result))
       try {
-        const importData = ImportData.safeParse(JSON.parse(result))
-        if (importData.error) {
-          setZodErrors(importData.error.errors)
+        const data = ImportData.safeParse(JSON.parse(result))
+        if (data.error) {
+          setZodErrors(data.error.errors)
           return
         }
-        const { members = [], transactions = [] } = importData.data
-        setMembers(members)
-        setTransactions(transactions)
+        setDataToImport(data.data)
       } catch (error) {
+        setIsImportError(true)
         console.error(error)
       }
     }
     reader.readAsText(pickedFile, 'UTF-8')
     reader.onerror = function (_event) {
+      setIsImportError(true)
       console.error(reader.error)
     }
 
-    setIsOpen(false)
+    setIsDropdownOpen(false)
     event.target.value = ''
   }
 
+  const clearImportData = () => {
+    setDataToImport(null)
+  }
+
+  const importData = () => {
+    if (!dataToImport) return
+    const { members = [], transactions = [] } = dataToImport
+    setMembers(members)
+    setTransactions(transactions)
+  }
+
+  const clearImportError = () => {
+    setIsImportError(false)
+    setZodErrors([])
+  }
+
   return (
-    <Dropdown
-      placement="bottom-end"
-      className="min-w-44"
-      radius="sm"
-      closeOnSelect={false}
-      isOpen={isOpen}
-      onOpenChange={setIsOpen}
-    >
-      <DropdownTrigger>
-        <Button isIconOnly variant="light" radius="full">
-          <Bars3Icon className="w-5 h-5" />
-        </Button>
-      </DropdownTrigger>
-      <DropdownMenu aria-label="static menu">
-        <DropdownItem key="issue" className="text-right" textValue="Laporkan bug">
-          <a href="https://github.com/rayhannr/talangeen/issues/new" target="_blank" rel="noreferrer">
-            Laporkan bug <Github className="w-5 h-5 inline-block ml-2" />
-          </a>
-        </DropdownItem>
-        <DropdownItem key="import" className="text-right" textValue="Impor data">
-          <label className="cursor-pointer">
-            Impor data <BarsArrowDownIcon className="w-5 h-5 inline-block ml-2" />
-            <input className="sr-only" type="file" accept=".json" name="file-import" onChange={onFileChange} />
-          </label>
-        </DropdownItem>
-        <DropdownItem key="export" onPress={exportData} className="text-right" textValue="Ekspor data">
-          Ekspor data <BarsArrowUpIcon className="w-5 h-5 inline-block ml-2" />
-        </DropdownItem>
-      </DropdownMenu>
-    </Dropdown>
+    <>
+      <Dropdown
+        placement="bottom-end"
+        className="min-w-44"
+        radius="sm"
+        closeOnSelect={false}
+        isOpen={isDropdownOpen}
+        onOpenChange={setIsDropdownOpen}
+      >
+        <DropdownTrigger>
+          <Button isIconOnly variant="light" radius="full">
+            <Bars3Icon className="w-5 h-5" />
+          </Button>
+        </DropdownTrigger>
+        <DropdownMenu aria-label="static menu">
+          <DropdownItem key="issue" className="text-right" textValue="Laporkan bug">
+            <a href="https://github.com/rayhannr/talangeen/issues/new" target="_blank" rel="noreferrer">
+              Laporkan bug <Github className="w-5 h-5 inline-block ml-2" />
+            </a>
+          </DropdownItem>
+          <DropdownItem key="import" className="text-right" textValue="Impor data">
+            <label className="cursor-pointer">
+              Impor data <BarsArrowDownIcon className="w-5 h-5 inline-block ml-2" />
+              <input className="sr-only" type="file" accept=".json" name="file-import" onChange={onFileChange} />
+            </label>
+          </DropdownItem>
+          <DropdownItem key="export" onPress={exportData} className="text-right" textValue="Ekspor data">
+            Ekspor data <BarsArrowUpIcon className="w-5 h-5 inline-block ml-2" />
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
+      <ImportFailedModal isOpen={isImportError || !!zodErrors.length} onClose={clearImportError} zodErrors={zodErrors} />
+      <ImportWarningModal isOpen={!!dataToImport} onClose={clearImportData} onSubmit={importData} />
+    </>
   )
 }

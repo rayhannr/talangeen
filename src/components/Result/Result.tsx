@@ -69,7 +69,7 @@ export const Result = () => {
           )}
           {isResultGenerated && !isFiltering && (
             <Tooltip content="Filter hasil">
-              <Button isIconOnly variant="flat" onClick={() => setIsFiltering(true)} radius="sm">
+              <Button isIconOnly variant="flat" onPress={() => setIsFiltering(true)} radius="sm">
                 <AdjustmentsHorizontalIcon className="w-5 h-5" />
               </Button>
             </Tooltip>
@@ -79,7 +79,7 @@ export const Result = () => {
               <Button
                 isIconOnly
                 variant="flat"
-                onClick={() => {
+                onPress={() => {
                   setIsFiltering(false)
                   setFilter(INITIAL_FILTER)
                 }}
@@ -90,7 +90,7 @@ export const Result = () => {
             </Tooltip>
           )}
           <Tooltip content="Hitung hasil">
-            <Button isIconOnly variant="flat" onClick={generateResult} radius="sm">
+            <Button isIconOnly variant="flat" onPress={generateResult} radius="sm">
               <CalculatorIcon className="w-5 h-5" />
             </Button>
           </Tooltip>

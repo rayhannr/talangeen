@@ -85,7 +85,7 @@ export const TransactionDetail = ({ transaction }: Props) => {
             <TableCell>
               <div className="flex">
                 <Tooltip content="Edit">
-                  <Button isIconOnly size="sm" variant="light" onClick={onOpen}>
+                  <Button isIconOnly size="sm" variant="light" onPress={onOpen}>
                     <PencilSquareIcon className="w-5 h-5" />
                   </Button>
                 </Tooltip>
@@ -109,7 +109,7 @@ export const TransactionDetail = ({ transaction }: Props) => {
                   <PopoverContent>
                     <div className="flex justify-between items-center gap-4">
                       Yakin mau hapus transaksi ini?
-                      <Button size="sm" variant="flat" color="danger" onClick={removeTransaction}>
+                      <Button size="sm" variant="flat" color="danger" onPress={removeTransaction}>
                         Hapus
                       </Button>
                     </div>

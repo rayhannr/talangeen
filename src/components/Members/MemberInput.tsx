@@ -47,7 +47,7 @@ export const MemberInput = ({ onSubmit, onCancel, selectedMember }: Props) => {
       <Button isIconOnly variant="flat" type="submit" radius="sm">
         <CheckIcon className="w-5 h-5" />
       </Button>
-      <Button isIconOnly variant="flat" type="submit" radius="sm" onClick={onCancel}>
+      <Button isIconOnly variant="flat" type="submit" radius="sm" onPress={onCancel}>
         <XMarkIcon className="w-5 h-5" />
       </Button>
     </form>
