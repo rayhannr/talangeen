@@ -25,7 +25,7 @@ const SyntaxHighlighter = ({ content, language = 'json' }: { content: any; langu
 const CORRECT_FORMAT = `{
   members: [
     {
-      name: "Erling", // teks
+      name: "Erling Haaland", // teks
       id: "de0e21e3" // teks
     },
     ...
@@ -63,29 +63,35 @@ const ERROR_EXAMPLE = `[
 
 export const ImportFailedModal = ({ isOpen, onClose, zodErrors }: Props) => {
   return (
-    <Modal isOpen={isOpen} onClose={onClose} size="xl" radius="sm">
+    <Modal isOpen={isOpen} onClose={onClose} size="xl" radius="sm" placement="top">
       <ModalContent>
-        <ModalHeader>Waduh</ModalHeader>
+        <ModalHeader>Gagal Impor</ModalHeader>
         <ModalBody>
           <Tabs aria-label="content tabs">
             <Tab key="warning" title="Peringatan">
-              <p>Impor datanya gagal bre. Bisa jadi karena lu upload file selain .json atau format data yang lu impor salah</p>
-              {zodErrors && (
+              <p>Impor datanya gagal bre. Bisa jadi karena:</p>
+              <ul className="list-inside list-disc ml-3">
+                <li>lu upload file selain .json</li>
+                <li>lu upload .json, tapi format datanya salah</li>
+              </ul>
+              {!!zodErrors?.length && (
                 <>
                   <p className="my-4">Eror di bawah ini nunjukkin mana yang salah dari data yang lu impor</p>
                   <SyntaxHighlighter content={JSON.stringify(zodErrors, null, 2)} />
                 </>
               )}
             </Tab>
-            <Tab key="how-to" title="Cara baca eror">
-              Misal di <i>tab</i> <Code className="mx-px">Peringatan</Code> lu nemu eror kek gini
-              <SyntaxHighlighter content={ERROR_EXAMPLE} language="json" />
-              Maksudnya, <Code className="mx-px">id</Code> di data ke-6 dari <Code className="mx-px">members</Code> formatnya
-              salah. Harusnya <Code className="mx-px">string</Code> atau teks, tapi lu malah masukkin angka.
-              <p className="mt-4">
-                Note: indeks di Javascript dimulai dari 0. Jadi, data dengan indeks 5 berarti dia data ke-6
-              </p>
-            </Tab>
+            {!!zodErrors?.length && (
+              <Tab key="how-to" title="Cara baca eror">
+                Misal di <i>tab</i> <Code className="mx-px">Peringatan</Code> lu nemu eror kek gini
+                <SyntaxHighlighter content={ERROR_EXAMPLE} language="json" />
+                Maksudnya, <Code className="mx-px">id</Code> di data ke-6 dari <Code className="mx-px">members</Code> formatnya
+                salah. Harusnya <Code className="mx-px">string</Code> atau teks, tapi lu malah masukkin angka.
+                <p className="mt-4">
+                  Note: indeks di Javascript dimulai dari 0. Jadi, data dengan indeks 5 berarti dia data ke-6
+                </p>
+              </Tab>
+            )}
             <Tab key="correct-format" title="Format yang bener">
               Berikut contoh data yang formatnya bener
               <SyntaxHighlighter content={CORRECT_FORMAT} language="javascript" />

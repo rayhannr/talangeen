@@ -39,11 +39,16 @@ export const Menu = () => {
     reader.onload = function (_event) {
       const result = JSON.parse(JSON.stringify(reader.result))
       try {
+        if (!pickedFile.name.endsWith('.json')) {
+          throw new Error('file should be .json')
+        }
+
         const data = ImportData.safeParse(JSON.parse(result))
         if (data.error) {
           setZodErrors(data.error.errors)
           return
         }
+
         setDataToImport(data.data)
       } catch (error) {
         setIsImportError(true)
@@ -100,7 +105,7 @@ export const Menu = () => {
           <DropdownItem key="import" className="text-right" textValue="Impor data">
             <label className="cursor-pointer">
               Impor data <BarsArrowDownIcon className="w-5 h-5 inline-block ml-2" />
-              <input className="sr-only" type="file" accept=".json" name="file-import" onChange={onFileChange} />
+              <input className="sr-only" type="file" name="file-import" onChange={onFileChange} />
             </label>
           </DropdownItem>
           <DropdownItem key="export" onPress={exportData} className="text-right" textValue="Ekspor data">
