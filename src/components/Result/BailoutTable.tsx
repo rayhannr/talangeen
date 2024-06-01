@@ -54,7 +54,7 @@ export const BailoutTable = ({ bailouts, filter }: Props) => {
 
   return (
     <>
-      <p className={twMerge('mt-4', !bailouts.size && 'opacity-80 dark:opacity-60')}>
+      <p className={twMerge('mt-4 mb-2', !bailouts.size && 'opacity-80 dark:opacity-60')}>
         {!bailouts.size
           ? 'Belum ada data yang bisa ditampilkan'
           : 'Berikut data uang yang harus dibayar orang yang ditalangin ke orang yang nalangin'}
