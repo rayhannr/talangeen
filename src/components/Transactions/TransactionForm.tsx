@@ -1,4 +1,4 @@
-import { Key } from 'react'
+import { ChangeEvent, Key } from 'react'
 import { Select, SelectItem } from '@nextui-org/select'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { membersAtom, membersMapAtom, transactionsAtom } from '../../stores'
@@ -42,7 +42,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     ...transaction,
     giver: membersMap.has(transaction?.giver || '') ? transaction?.giver! : '',
     receivers: transaction?.receivers?.filter((receiver) => membersMap.has(receiver)) || [],
-    amount: String(transaction?.amount),
+    amount: String(transaction?.amount || ''),
   })
   const [touched, setTouched] = useSimpleReducer<Touched>({
     giver: false,
@@ -83,7 +83,8 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     setForm({ type: type as TransactionType })
   }
 
-  const onAmountChange = (value: string) => {
+  const onAmountChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { value } = event.target
     setTouched({ amount: true })
     setForm({ amount: value })
   }
@@ -199,11 +200,11 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
             radius="sm"
             labelPlacement="outside"
             variant="bordered"
-            value={String(form.amount)}
+            value={form.amount}
             isRequired
             isInvalid={!isAmountValid}
             errorMessage={!isAmountValid && 'Nominal harus berupa angka yang lebih besar dari 0'}
-            onValueChange={onAmountChange}
+            onChange={onAmountChange}
           />
 
           {form.receivers.length > 1 && (
