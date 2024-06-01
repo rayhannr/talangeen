@@ -10,7 +10,9 @@ import { Button } from '@nextui-org/button'
 import { Radio, RadioGroup } from '@nextui-org/radio'
 import { Input, Textarea } from '@nextui-org/input'
 
-type FormInput = Omit<Transaction, 'id' | 'createdAt'>
+interface FormInput extends Omit<Transaction, 'id' | 'createdAt' | 'amount'> {
+  amount: string
+}
 type Touched = {
   [key in keyof FormInput]: boolean
 }
@@ -26,7 +28,7 @@ const DEFAULT_FORM: FormInput = {
   receivers: [],
   note: '',
   description: '',
-  amount: 0,
+  amount: '0',
   type: 'one-for-one',
 }
 
@@ -40,6 +42,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     ...transaction,
     giver: membersMap.has(transaction?.giver || '') ? transaction?.giver! : '',
     receivers: transaction?.receivers?.filter((receiver) => membersMap.has(receiver)) || [],
+    amount: String(transaction?.amount),
   })
   const [touched, setTouched] = useSimpleReducer<Touched>({
     giver: false,
@@ -53,7 +56,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
   const isGiverValid = !!form.giver?.trim() || !touched.giver
   const isReceiversValid = !!form.receivers?.length || !touched.receivers
   const isAmountValid =
-    (/^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) && form.amount > 0 && form.amount <= Number.MAX_VALUE) ||
+    (/^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) && +form.amount > 0 && +form.amount <= Number.MAX_VALUE) ||
     !touched.amount
   const isNoteValid = !!form.note?.trim() || !touched.note
 
@@ -61,8 +64,8 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     !!form.giver?.trim() &&
     !!form.receivers?.length &&
     /^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) &&
-    form.amount > 0 &&
-    form.amount <= Number.MAX_VALUE &&
+    +form.amount > 0 &&
+    +form.amount <= Number.MAX_VALUE &&
     !!form.note?.trim()
 
   const onGiverChange = (value: Key | null) => {
@@ -82,8 +85,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
 
   const onAmountChange = (value: string) => {
     setTouched({ amount: true })
-    const amount = +value
-    setForm({ amount })
+    setForm({ amount: value })
   }
 
   const onNoteChange = (note: string) => {
@@ -95,12 +97,12 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     const receiversTotal = form.receivers.length
     if (receiversTotal <= 1) return ''
 
-    const formattedAmount = form.amount.toLocaleString()
-    const amountPerReceiver = (type === 'one-for-one' ? form.amount : Math.round(form.amount / receiversTotal)).toLocaleString()
+    const formattedAmount = (+form.amount).toFixed(3).toLocaleString()
+    const amountPerReceiver = (type === 'one-for-one' ? form.amount : +form.amount / receiversTotal).toLocaleString()
 
     if (type === 'one-for-one')
       return `Yang ditalangin masing-masing dapet ${formattedAmount}, jadi totalnya ${(
-        form.amount * receiversTotal
+        +form.amount * receiversTotal
       ).toLocaleString()}`
 
     return `Yang ditalangin masing-masing dapet ${formattedAmount} / ${receiversTotal} = ${amountPerReceiver}`
@@ -119,6 +121,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
           type,
           id: crypto.randomUUID(),
           createdAt: new Date().toISOString(),
+          amount: +form.amount,
         },
         ...(transactions as Transaction[]),
       ])
@@ -129,6 +132,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
         clonedTransactions[editedIndex] = {
           ...clonedTransactions[editedIndex],
           ...form,
+          amount: +form.amount,
           type,
         }
 
@@ -189,6 +193,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
 
           <Input
             type="number"
+            step={0.1}
             label="Nominal"
             placeholder="e.g. 14000"
             radius="sm"

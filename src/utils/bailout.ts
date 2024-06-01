@@ -12,7 +12,7 @@ export const getBailoutResult = (transactions: Transaction[]) => {
   transactions.forEach((t) => {
     t.receivers.forEach((r) => {
       const amount = t.type === 'one-for-one' ? t.amount : t.amount / t.receivers.length
-      const fixedAmount = Math.round(amount)
+      const fixedAmount = +amount.toFixed(3)
       const currentKey = getMapKey(t.giver, r)
       const currentDonation = bailoutMap.get(currentKey) || 0
       bailoutMap.set(currentKey, currentDonation + fixedAmount)
@@ -46,13 +46,13 @@ const getBailoutAccumulation = (transactions: Transaction[]) => {
 
   transactions.forEach((t) => {
     const amount = t.type === 'one-for-one' ? t.amount * t.receivers.length : t.amount
-    const fixedAmount = Math.round(amount)
+    const fixedAmount = +amount.toFixed(3)
 
     const giverAccumulation = accumulationMap.get(t.giver) || 0
     accumulationMap.set(t.giver, giverAccumulation + fixedAmount)
     t.receivers.forEach((r) => {
       const amount = t.type === 'one-for-one' ? t.amount : t.amount / t.receivers.length
-      const fixedAmount = Math.round(amount)
+      const fixedAmount = +amount.toFixed(3)
 
       const receiverAccumulation = accumulationMap.get(r) || 0
       accumulationMap.set(r, receiverAccumulation - fixedAmount)
@@ -82,7 +82,7 @@ export const getBailoutResultV2 = (transactions: Transaction[]) => {
     const receiverAmount = -receivers[receiverIndex].amount
 
     if (giverAmount > receiverAmount) {
-      const diff = giverAmount - receiverAmount
+      const diff = +(giverAmount - receiverAmount).toFixed(3)
       result.push({
         amount: receiverAmount,
         giverId: givers[giverIndex].memberId,
@@ -93,7 +93,7 @@ export const getBailoutResultV2 = (transactions: Transaction[]) => {
       receivers[receiverIndex].amount = 0
       receiverIndex++
     } else if (receiverAmount > giverAmount) {
-      const diff = receiverAmount - giverAmount
+      const diff = +(receiverAmount - giverAmount).toFixed(3)
       result.push({
         amount: giverAmount,
         giverId: givers[giverIndex].memberId,

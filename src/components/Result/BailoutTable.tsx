@@ -54,32 +54,35 @@ export const BailoutTable = ({ bailouts, filter }: Props) => {
 
   return (
     <>
-      <p className={twMerge('my-4', !bailouts.size && 'opacity-80 dark:opacity-60')}>
+      <p className={twMerge('mt-4', !bailouts.size && 'opacity-80 dark:opacity-60')}>
         {!bailouts.size
           ? 'Belum ada data yang bisa ditampilkan'
           : 'Berikut data uang yang harus dibayar orang yang ditalangin ke orang yang nalangin'}
       </p>
       {!!bailouts.size && (
-        <Table
-          radius="sm"
-          shadow="none"
-          isStriped
-          isHeaderSticky
-          aria-label="Tabel uang yang harus dibayar yang ditalangin ke yang nalangin"
-        >
-          <TableHeader columns={columns}>
-            {(column) => <TableColumn key={column.key}>{column.label.toUpperCase()}</TableColumn>}
-          </TableHeader>
-          <TableBody items={rows}>
-            {(item) => (
-              <TableRow key={item.key}>
-                <TableCell>{getMemberName(getKeyValue(item, 'receiver'), membersMap)}</TableCell>
-                <TableCell>{getMemberName(getKeyValue(item, 'giver'), membersMap)}</TableCell>
-                <TableCell>{getKeyValue(item, 'amount').toLocaleString()}</TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+        <>
+          <p className="mb-4">Note: Nominal di tabel bisa jadi gak akurat kalau dia bukan bilangan bulat</p>
+          <Table
+            radius="sm"
+            shadow="none"
+            isStriped
+            isHeaderSticky
+            aria-label="Tabel uang yang harus dibayar yang ditalangin ke yang nalangin"
+          >
+            <TableHeader columns={columns}>
+              {(column) => <TableColumn key={column.key}>{column.label.toUpperCase()}</TableColumn>}
+            </TableHeader>
+            <TableBody items={rows}>
+              {(item) => (
+                <TableRow key={item.key}>
+                  <TableCell>{getMemberName(getKeyValue(item, 'receiver'), membersMap)}</TableCell>
+                  <TableCell>{getMemberName(getKeyValue(item, 'giver'), membersMap)}</TableCell>
+                  <TableCell>{getKeyValue(item, 'amount').toLocaleString()}</TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </>
       )}
     </>
   )

@@ -17,7 +17,7 @@ export const getTypeDescription = (transaction: Transaction) => {
   const amount =
     transaction.type === 'one-for-one'
       ? transaction.amount.toLocaleString()
-      : Math.round(transaction.amount / transaction.receivers.length).toLocaleString()
+      : (transaction.amount / transaction.receivers.length).toLocaleString()
   return `Yang ditalangin masing-masing dapet ${amount}`
 }
 
