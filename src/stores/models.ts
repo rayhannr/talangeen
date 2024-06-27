@@ -26,3 +26,10 @@ export const ImportData = z.object({
   transactions: z.array(Transaction).optional(),
 })
 export interface ImportData extends z.TypeOf<typeof ImportData> {}
+
+export interface TableData {
+  key: string
+  receiver: string
+  giver: string
+  amount: number
+}

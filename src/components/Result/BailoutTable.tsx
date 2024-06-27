@@ -4,9 +4,10 @@ import { twMerge } from 'tailwind-merge'
 import { membersMapAtom } from '../../stores'
 import { getMemberName } from '../../utils/member'
 import { Filter } from './BailoutFilter'
+import { TableData } from '../../stores/models'
 
 interface Props {
-  bailouts: Map<string, number>
+  bailouts: TableData[]
   filter: Filter
 }
 
@@ -28,17 +29,7 @@ const columns = [
 export const BailoutTable = ({ bailouts, filter }: Props) => {
   const membersMap = useAtomValue(membersMapAtom)
 
-  const rows = [...bailouts]
-    .map(([key, value]) => {
-      const [giverId, receiverId] = key.split('+')
-
-      return {
-        key,
-        receiver: receiverId,
-        giver: giverId,
-        amount: value,
-      }
-    })
+  const rows = bailouts
     .filter((row) => {
       if (!filter.giver.length) return true
       return filter.giver.includes(row.giver)
@@ -54,12 +45,12 @@ export const BailoutTable = ({ bailouts, filter }: Props) => {
 
   return (
     <>
-      <p className={twMerge('mt-4 mb-2', !bailouts.size && 'opacity-80 dark:opacity-60')}>
-        {!bailouts.size
+      <p className={twMerge('mt-4 mb-2', !bailouts.length && 'opacity-80 dark:opacity-60')}>
+        {!bailouts.length
           ? 'Belum ada data yang bisa ditampilkan'
           : 'Berikut data uang yang harus dibayar orang yang ditalangin ke orang yang nalangin'}
       </p>
-      {!!bailouts.size && (
+      {!!bailouts.length && (
         <>
           <p className="mb-4">Note: Nominal di tabel bisa jadi gak akurat kalau dia bukan bilangan bulat</p>
           <Table

@@ -8,36 +8,38 @@ import InformationCircleIcon from '@heroicons/react/24/outline/InformationCircle
 import AdjustmentsHorizontalIcon from '@heroicons/react/24/outline/AdjustmentsHorizontalIcon'
 import XMarkIcon from '@heroicons/react/24/outline/XMarkIcon'
 import { store, transactionsAtom } from '../../stores'
-import { getBailoutResult, getBailoutResultV2 } from '../../utils/bailout'
+import { getBailoutResult, getBailoutResultV2, parseBailout } from '../../utils/bailout'
 import { BailoutTable } from './BailoutTable'
 import { useDisclosure } from '@nextui-org/modal'
 import { InfoModalV1 } from './InfoModalV1'
 import { InfoModalV2 } from './InfoModalV2'
 import { BailoutFilter, Filter } from './BailoutFilter'
 import { useSimpleReducer } from '../../hooks/reducer'
+import { CopyButton } from './CopyButton'
+import { TableData } from '../../stores/models'
 
 const INITIAL_FILTER: Filter = { giver: [], receiver: [], amount: -1 }
 
 export const Result = () => {
   const transactions = useAtomValue(transactionsAtom)
   const { isOpen, onOpen, onOpenChange } = useDisclosure()
-  const [bailoutsV1, setBailoutsV1] = useState<Map<string, number>>(new Map())
-  const [bailoutsV2, setBailoutsV2] = useState<Map<string, number>>(new Map())
+  const [bailoutsV1, setBailoutsV1] = useState<TableData[]>([])
+  const [bailoutsV2, setBailoutsV2] = useState<TableData[]>([])
   const [isUpdated, setIsUpdated] = useState(false)
   const [selectedTab, setSelectedTab] = useState('1')
 
   const [filter, setFilter] = useSimpleReducer<Filter>(INITIAL_FILTER)
   const [isFiltering, setIsFiltering] = useState(false)
 
-  const isResultGenerated = !!bailoutsV1.size || !!bailoutsV2.size
+  const isResultGenerated = !!bailoutsV1.length || !!bailoutsV2.length
 
   const generateResult = () => {
     setIsUpdated(false)
     const bailoutMapV1 = getBailoutResult(transactions)
     const bailoutMapV2 = getBailoutResultV2(transactions)
 
-    setBailoutsV1(bailoutMapV1)
-    setBailoutsV2(bailoutMapV2)
+    setBailoutsV1(parseBailout(bailoutMapV1))
+    setBailoutsV2(parseBailout(bailoutMapV2))
   }
 
   useEffect(() => {
@@ -53,16 +55,16 @@ export const Result = () => {
   }, [])
 
   useEffect(() => {
-    if (!bailoutsV1.size) return
+    if (!bailoutsV1.length) return
     window.scrollBy({ top: 200, behavior: 'smooth' })
-  }, [bailoutsV1.size])
+  }, [bailoutsV1.length])
 
   return (
     <div className="flex flex-col px-2">
       <div className="flex justify-between gap-5 items-center mb-2">
         <p className="font-bold">Hasil</p>
         <div className="flex items-center justify-end gap-2">
-          {isUpdated && !!bailoutsV1.size && (
+          {isUpdated && !!bailoutsV1.length && (
             <span className="opacity-80 dark:opacity-60 text-sm text-pretty">
               Ada perubahan data anggota atau transaksi. Silakan hitung ulang.
             </span>
@@ -89,6 +91,7 @@ export const Result = () => {
               </Button>
             </Tooltip>
           )}
+          {isResultGenerated && <CopyButton data={selectedTab === '1' ? bailoutsV1 : bailoutsV2} />}
           <Tooltip content="Hitung hasil">
             <Button isIconOnly variant="flat" onPress={generateResult} radius="sm">
               <CalculatorIcon className="w-5 h-5" />

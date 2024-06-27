@@ -1,4 +1,4 @@
-import { Transaction } from '../stores/models'
+import { TableData, Transaction } from '../stores/models'
 
 const getMapKey = (firstId: string, secondId: string) => `${firstId}+${secondId}`
 
@@ -124,4 +124,17 @@ export const getBailoutResultV2 = (transactions: Transaction[]) => {
   })
 
   return resultMap
+}
+
+export const parseBailout = (bailout: Map<string, number>): TableData[] => {
+  return [...bailout].map(([key, value]) => {
+    const [giverId, receiverId] = key.split('+')
+
+    return {
+      key,
+      receiver: receiverId,
+      giver: giverId,
+      amount: value,
+    }
+  })
 }
