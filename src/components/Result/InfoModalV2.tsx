@@ -26,14 +26,13 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
             <li>C +2000</li>
             <li>D -7500</li>
           </ul>
-          <p>
-            Total duit yang (+) dan (-) pasti sama. Gak penting siapa nalangin siapa. Yang penting di sini adalah, orang yang
-            akumulasinya (-) balikin duit orang yang akumulasinya (+)
-          </p>
-          <p>
-            Dari keterangan di atas, setelah lu klik tombol berikon kalkulator, bakal muncul tabel di bawah yang nampilin duit
-            talangan yang harus dibalikin dari siapa ke siapa. Kira-kira rinciannya gini
-          </p>
+          <p>Yang perlu diperhatiin:</p>
+          <ul className="list-disc list-inside">
+            <li>Total duit yang (+) dan (-) pasti sama, 16000</li>
+            <li>Yang akumulasinya negatif cukup balikin duit aja meskipun dia pernah nalangin</li>
+            <li>Yang akumulasinya positif cukup terima duit aja meskipun dia pernah ditalangin</li>
+          </ul>
+          <p>Dari keterangan di atas, hasil akhirnya kira-kira gini</p>
           <ul className="list-disc list-inside">
             <li>A balikin duit ke B 8500</li>
             <li>D balikin duit ke B 5500</li>
