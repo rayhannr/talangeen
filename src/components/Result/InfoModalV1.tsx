@@ -7,7 +7,7 @@ interface Props {
 
 export const InfoModalV1 = ({ isOpen, onOpenChange }: Props) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Versi 1</ModalHeader>
         <ModalBody>
@@ -37,6 +37,21 @@ export const InfoModalV1 = ({ isOpen, onOpenChange }: Props) => {
             A nalangin C 5000, habis itu C nalangin A 4000. Ntar A gak perlu balikin duit C 4000 dan C balikin duit A 5000
             karena itu intinya sama aja kek C balikin duit A 1000
           </p>
+
+          <h3 className="mt-4 font-semibold">Cara hitung (ringkasan)</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              Untuk <b>satu untuk satu</b>, tiap penerima dapet jumlah yang sama persis seperti yang lu tulis.
+            </li>
+            <li>
+              Untuk <b>satu untuk semua</b>, jumlah total dibulatkan ke satuan ribuan terlebih dulu. Contoh: 29.000 → 29 ribu.
+              Kemudian dibagi rata (dalam ribuan), sisanya (jika ada) diberikan sebagai penambahan 1.000 kepada beberapa orang.
+            </li>
+            <li>
+              Contoh: 29.000 dibagi 3 → 29 ribu → 9 ribu, 9 ribu, 11 ribu (ditampilkan sebagai 9.000 (plus 1.000 untuk 2 orang)
+              pada ringkasan).
+            </li>
+          </ul>
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -56,22 +56,21 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
   const isGiverValid = !!form.giver?.trim() || !touched.giver
   const isReceiversValid = !!form.receivers?.length || !touched.receivers
   const isAmountValid =
-    (/^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) && +form.amount > 0 && +form.amount <= Number.MAX_VALUE) ||
+    (/^[1-9]\d*$/.test(String(Math.round(+form.amount))) && +form.amount > 0 && +form.amount <= Number.MAX_VALUE) ||
     !touched.amount
   const isNoteValid = !!form.note?.trim() || !touched.note
 
   const isAllValid = () =>
     !!form.giver?.trim() &&
     !!form.receivers?.length &&
-    /^(0|[1-9]\d*)(\.\d+)?$/.test(String(form.amount)) &&
+    /^[1-9]\d*$/.test(String(Math.round(+form.amount))) &&
     +form.amount > 0 &&
     +form.amount <= Number.MAX_VALUE &&
     !!form.note?.trim()
 
   const onGiverChange = (value: Key | null) => {
     const giver = value as string
-    const receivers = form.receivers.filter((receiver) => receiver !== giver)
-    setForm({ giver, receivers })
+    setForm({ giver })
   }
 
   const onReceiversChange = (values: 'all' | Set<Key>) => {
@@ -98,15 +97,26 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
     const receiversTotal = form.receivers.length
     if (receiversTotal <= 1) return ''
 
-    const formattedAmount = (+form.amount).toFixed(3).toLocaleString()
-    const amountPerReceiver = (type === 'one-for-one' ? form.amount : +form.amount / receiversTotal).toLocaleString()
+    const amountNum = Math.round(+form.amount)
 
     if (type === 'one-for-one')
-      return `Yang ditalangin masing-masing dapet ${formattedAmount}, jadi totalnya ${(
-        +form.amount * receiversTotal
+      return `Yang ditalangin masing-masing dapet ${amountNum.toLocaleString()}, jadi totalnya ${(
+        amountNum * receiversTotal
       ).toLocaleString()}`
 
-    return `Yang ditalangin masing-masing dapet ${formattedAmount} / ${receiversTotal} = ${amountPerReceiver}`
+    // one-for-all: split in thousands and distribute remainder
+    const unit = 1000
+    const totalThousands = Math.round(amountNum / unit)
+    const baseThousands = Math.floor(totalThousands / receiversTotal)
+    const remThousands = totalThousands % receiversTotal
+    if (remThousands === 0)
+      return `Yang ditalangin masing-masing dapet ${amountNum.toLocaleString()} / ${receiversTotal} = ${(
+        baseThousands * unit
+      ).toLocaleString()}`
+
+    return `Yang ditalangin ${amountNum.toLocaleString()} / ${receiversTotal} = ${(
+      baseThousands * unit
+    ).toLocaleString()} (plus ${unit.toLocaleString()} untuk ${remThousands} orang)`
   }
 
   const onSubmit = () => {
@@ -122,7 +132,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
           type,
           id: crypto.randomUUID(),
           createdAt: new Date().toISOString(),
-          amount: +form.amount,
+          amount: Math.round(+form.amount),
         },
         ...(transactions as Transaction[]),
       ])
@@ -133,7 +143,7 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
         clonedTransactions[editedIndex] = {
           ...clonedTransactions[editedIndex],
           ...form,
-          amount: +form.amount,
+          amount: Math.round(+form.amount),
           type,
         }
 
@@ -177,7 +187,6 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
             placeholder="e.g. Lhaksana, Alex"
             variant="bordered"
             selectedKeys={form.receivers}
-            disabledKeys={[form.giver]}
             onSelectionChange={onReceiversChange}
             isRequired
             isInvalid={!isReceiversValid}

@@ -7,7 +7,7 @@ interface Props {
 
 export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
   return (
-    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+    <Modal isOpen={isOpen} onOpenChange={onOpenChange} scrollBehavior="inside">
       <ModalContent>
         <ModalHeader className="flex flex-col gap-1">Versi 2</ModalHeader>
         <ModalBody>
@@ -37,6 +37,19 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
             <li>A balikin duit ke B 8500</li>
             <li>D balikin duit ke B 5500</li>
             <li>D balikin duit ke C 2000</li>
+          </ul>
+
+          <h3 className="mt-4 font-semibold">Cara hitung (ringkasan)</h3>
+          <ul className="list-disc list-inside">
+            <li>
+              Jumlah total dibulatkan ke satuan ribuan lalu dibagi rata (dalam ribuan) untuk setiap penerima. Ini mencegah angka
+              desimal/pecahan kecil.
+            </li>
+            <li>
+              Jika ada sisa ribuan setelah pembagian rata, sisa tersebut akan didistribusikan sebagai tambahan 1.000 kepada
+              beberapa penerima (ditentukan oleh logika distribusi sisanya).
+            </li>
+            <li>Contoh ringkas: 29.000 dibagi 3 → 9.000, 9.000, 11.000 (sisa didistribusikan sebagai tambahan ribuan).</li>
           </ul>
         </ModalBody>
       </ModalContent>

@@ -10,13 +10,61 @@ export const getBailoutResult = (transactions: Transaction[]) => {
   if (!transactions?.length) return bailoutMap
 
   transactions.forEach((t) => {
-    t.receivers.forEach((r) => {
-      const amount = t.type === 'one-for-one' ? t.amount : t.amount / t.receivers.length
-      const fixedAmount = +amount.toFixed(3)
-      const currentKey = getMapKey(t.giver, r)
-      const currentDonation = bailoutMap.get(currentKey) || 0
-      bailoutMap.set(currentKey, currentDonation + fixedAmount)
-    })
+    if (t.type === 'one-for-one') {
+      t.receivers.forEach((r) => {
+        if (r === t.giver) return // skip self-debt
+        const share = t.amount
+        const currentKey = getMapKey(t.giver, r)
+        const currentDonation = bailoutMap.get(currentKey) || 0
+        bailoutMap.set(currentKey, currentDonation + share)
+      })
+    } else {
+      // split in thousands and distribute remainder to receivers who owe the least
+      const unit = 1000
+      const total = t.amount
+      const m = t.receivers.length
+      const eligible = t.receivers.filter((r) => r !== t.giver)
+      if (eligible.length === 0) return
+      const totalThousands = Math.round(total / unit)
+      const baseThousands = Math.floor(totalThousands / m)
+      const remThousands = totalThousands % m
+
+      // compute current debt per receiver (sum of amounts where they are receiver)
+      const currentDebt = new Map<string, number>()
+      bailoutMap.forEach((val, key) => {
+        const [, recv] = key.split('+')
+        const prev = currentDebt.get(recv) || 0
+        currentDebt.set(recv, prev + val)
+      })
+
+      // rank eligible receivers by current debt (ascending). Keep original index for stability
+      const ranked = eligible.map((id, idx) => ({ id, debt: currentDebt.get(id) || 0, idx }))
+      ranked.sort((a, b) => a.debt - b.debt || a.idx - b.idx)
+
+      let chosen: Set<string>
+      if (remThousands <= 0) {
+        chosen = new Set()
+      } else {
+        // choose up to remThousands receivers among eligible. If all debts equal -> random
+        const chooseCount = Math.min(remThousands, eligible.length)
+        const allEqual = ranked.every((r) => r.debt === ranked[0].debt)
+        if (allEqual) {
+          // prefer last-selected receivers (higher original index) when debts are equal
+          const byLastSelected = ranked.slice().sort((a, b) => b.idx - a.idx)
+          chosen = new Set(byLastSelected.slice(0, chooseCount).map((r) => r.id))
+        } else {
+          chosen = new Set(ranked.slice(0, chooseCount).map((r) => r.id))
+        }
+      }
+
+      eligible.forEach((r) => {
+        const extra = chosen && chosen.has(r) ? 1 : 0
+        const share = (baseThousands + extra) * unit
+        const currentKey = getMapKey(t.giver, r)
+        const currentDonation = bailoutMap.get(currentKey) || 0
+        bailoutMap.set(currentKey, currentDonation + share)
+      })
+    }
   })
 
   bailoutMap.forEach((value, key) => {
@@ -45,18 +93,60 @@ const getBailoutAccumulation = (transactions: Transaction[]) => {
   if (!transactions?.length) return []
 
   transactions.forEach((t) => {
-    const amount = t.type === 'one-for-one' ? t.amount * t.receivers.length : t.amount
-    const fixedAmount = +amount.toFixed(3)
+    const unit = 1000
+    if (t.type === 'one-for-one') {
+      const total = t.amount * t.receivers.length
+      const giverAccumulation = accumulationMap.get(t.giver) || 0
+      accumulationMap.set(t.giver, giverAccumulation + total)
 
-    const giverAccumulation = accumulationMap.get(t.giver) || 0
-    accumulationMap.set(t.giver, giverAccumulation + fixedAmount)
-    t.receivers.forEach((r) => {
-      const amount = t.type === 'one-for-one' ? t.amount : t.amount / t.receivers.length
-      const fixedAmount = +amount.toFixed(3)
+      t.receivers.forEach((r) => {
+        if (r === t.giver) return // skip self
+        const receiverAccumulation = accumulationMap.get(r) || 0
+        accumulationMap.set(r, receiverAccumulation - t.amount)
+      })
+    } else {
+      const total = t.amount
+      const m = t.receivers.length
+      const eligible = t.receivers.filter((r) => r !== t.giver)
+      if (eligible.length === 0) return
+      const totalThousands = Math.round(total / unit)
+      const baseThousands = Math.floor(totalThousands / m)
+      const remThousands = totalThousands % m
+      const totalRounded = totalThousands * unit
 
-      const receiverAccumulation = accumulationMap.get(r) || 0
-      accumulationMap.set(r, receiverAccumulation - fixedAmount)
-    })
+      const giverAccumulation = accumulationMap.get(t.giver) || 0
+      accumulationMap.set(t.giver, giverAccumulation + totalRounded)
+
+      // compute current accumulation-based debt for eligible receivers
+      const currentDebt = new Map<string, number>()
+      accumulationMap.forEach((val, key) => {
+        const prev = currentDebt.get(key) || 0
+        currentDebt.set(key, prev + val)
+      })
+
+      const ranked = eligible.map((id, idx) => ({ id, debt: currentDebt.get(id) || 0, idx }))
+      ranked.sort((a, b) => a.debt - b.debt || a.idx - b.idx)
+
+      const chooseCount = Math.min(remThousands, eligible.length)
+      let chosen: Set<string>
+      const allEqual = ranked.every((r) => r.debt === ranked[0].debt)
+      if (chooseCount <= 0) {
+        chosen = new Set()
+      } else if (allEqual) {
+        // prefer last-selected receivers (higher original index) when debts are equal
+        const byLastSelected = ranked.slice().sort((a, b) => b.idx - a.idx)
+        chosen = new Set(byLastSelected.slice(0, chooseCount).map((r) => r.id))
+      } else {
+        chosen = new Set(ranked.slice(0, chooseCount).map((r) => r.id))
+      }
+
+      eligible.forEach((r) => {
+        const extra = chosen && chosen.has(r) ? 1 : 0
+        const share = (baseThousands + extra) * unit
+        const receiverAccumulation = accumulationMap.get(r) || 0
+        accumulationMap.set(r, receiverAccumulation - share)
+      })
+    }
   })
 
   const accumulations = [...accumulationMap].map(([key, value]) => ({ memberId: key, amount: value }))

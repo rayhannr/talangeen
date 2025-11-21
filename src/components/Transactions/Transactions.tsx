@@ -1,7 +1,7 @@
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, useState, useRef } from 'react'
 import { Button } from '@nextui-org/button'
 import { Input } from '@nextui-org/input'
-import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal'
+import { Modal, ModalContent, ModalHeader } from '@nextui-org/modal'
 import { Select, SelectItem } from '@nextui-org/select'
 import { Tooltip } from '@nextui-org/tooltip'
 import { useAtomValue } from 'jotai'
@@ -31,7 +31,15 @@ const filterByOptions = [
 ]
 
 export const Transactions = () => {
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
+  const allowCloseRef = useRef(false)
+
+  const onOpen = () => setIsOpen(true)
+  const onOpenChange = (next: boolean) => {
+    if (!next && !allowCloseRef.current) return
+    setIsOpen(next)
+    allowCloseRef.current = false
+  }
   const members = useAtomValue(membersAtom)
   const membersMap = useAtomValue(membersMapAtom)
   const transactions = useAtomValue(transactionsAtom)
@@ -139,14 +147,21 @@ export const Transactions = () => {
       )}
       <TransactionsList transactions={filteredTransactions} />
       <ResetData type="transaction" />
-      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
+      <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top" hideCloseButton>
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Tambah Transaksi</ModalHeader>
-              <TransactionForm onClose={onClose} />
-            </>
-          )}
+          {(onClose) => {
+            const wrappedClose = () => {
+              allowCloseRef.current = true
+              onClose()
+            }
+
+            return (
+              <>
+                <ModalHeader>Tambah Transaksi</ModalHeader>
+                <TransactionForm onClose={wrappedClose} />
+              </>
+            )
+          }}
         </ModalContent>
       </Modal>
     </div>

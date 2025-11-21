@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@nextui-org/table'
 import { Tooltip } from '@nextui-org/tooltip'
 import { Button } from '@nextui-org/button'
-import { Modal, ModalContent, ModalHeader, useDisclosure } from '@nextui-org/modal'
+import { Modal, ModalContent, ModalHeader } from '@nextui-org/modal'
 import PencilSquareIcon from '@heroicons/react/24/outline/PencilSquareIcon'
 import TrashIcon from '@heroicons/react/24/outline/TrashIcon'
 import { membersMapAtom, transactionsAtom } from '../../stores'
@@ -20,7 +20,15 @@ interface Props {
 export const TransactionDetail = ({ transaction }: Props) => {
   const membersMap = useAtomValue(membersMapAtom)
   const setTransactions = useSetAtom(transactionsAtom)
-  const { isOpen, onOpen, onOpenChange } = useDisclosure()
+  const [isOpen, setIsOpen] = useState(false)
+  const allowCloseRef = useRef(false)
+
+  const onOpen = () => setIsOpen(true)
+  const onOpenChange = (next: boolean) => {
+    if (!next && !allowCloseRef.current) return
+    setIsOpen(next)
+    allowCloseRef.current = false
+  }
   const [isDeleting, setIsDeleting] = useState(false)
 
   const removeTransaction = () => {
@@ -123,12 +131,19 @@ export const TransactionDetail = ({ transaction }: Props) => {
 
       <Modal isOpen={isOpen} onOpenChange={onOpenChange} placement="top">
         <ModalContent>
-          {(onClose) => (
-            <>
-              <ModalHeader>Edit Transaksi</ModalHeader>
-              <TransactionForm onClose={onClose} transaction={transaction} isEdit />
-            </>
-          )}
+          {(onClose) => {
+            const wrappedClose = () => {
+              allowCloseRef.current = true
+              onClose()
+            }
+
+            return (
+              <>
+                <ModalHeader>Edit Transaksi</ModalHeader>
+                <TransactionForm onClose={wrappedClose} transaction={transaction} isEdit />
+              </>
+            )
+          }}
         </ModalContent>
       </Modal>
     </>

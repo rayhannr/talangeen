@@ -14,11 +14,26 @@ export const getTotalAmount = (transaction: Transaction) => {
 }
 
 export const getTypeDescription = (transaction: Transaction) => {
-  const amount =
-    transaction.type === 'one-for-one'
-      ? transaction.amount.toLocaleString()
-      : (transaction.amount / transaction.receivers.length).toLocaleString()
-  return `Yang ditalangin masing-masing dapet ${amount}`
+  const receiversTotal = transaction.receivers.length
+  if (receiversTotal <= 1) return `Yang ditalangin masing-masing dapet ${transaction.amount.toLocaleString()}`
+
+  const amountNum = Math.round(transaction.amount)
+
+  if (transaction.type === 'one-for-one') {
+    return `Yang ditalangin masing-masing dapet ${amountNum.toLocaleString()}`
+  }
+
+  // one-for-all: split in thousands and describe remainder distribution
+  const unit = 1000
+  const totalThousands = Math.round(amountNum / unit)
+  const baseThousands = Math.floor(totalThousands / receiversTotal)
+  const remThousands = totalThousands % receiversTotal
+
+  if (remThousands === 0) return `Yang ditalangin masing-masing dapet ${(baseThousands * unit).toLocaleString()}`
+
+  return `Yang ditalangin ${amountNum.toLocaleString()} / ${receiversTotal} = ${(
+    baseThousands * unit
+  ).toLocaleString()} (plus ${unit.toLocaleString()} untuk ${remThousands} orang)`
 }
 
 export const getReceiversName = (receivers: string[], isDetailed?: boolean, map?: Map<string, string>) => {
