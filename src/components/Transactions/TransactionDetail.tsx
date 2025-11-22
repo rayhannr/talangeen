@@ -92,7 +92,7 @@ export const TransactionDetail = ({ transaction }: Props) => {
             <TableCell>Aksi</TableCell>
             <TableCell>
               <div className="flex">
-                <Tooltip content="Edit">
+                <Tooltip content="Ubah">
                   <Button isIconOnly size="sm" variant="light" onPress={onOpen}>
                     <PencilSquareIcon className="w-5 h-5" />
                   </Button>

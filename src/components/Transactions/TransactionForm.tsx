@@ -204,8 +204,8 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
           <Input
             type="number"
             step={0.1}
-            label="Nominal"
-            placeholder="e.g. 14000"
+            label="Jumlah"
+            placeholder="contoh: 14000"
             radius="sm"
             labelPlacement="outside"
             variant="bordered"
@@ -230,16 +230,16 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
                 classNames={{ label: 'text-sm mr-6' }}
                 description={getAmountDescription('one-for-one')}
               >
-                Satu untuk satu
+                Satu-per-orang
               </Radio>
               <Radio value="one-for-all" classNames={{ label: 'text-sm' }} description={getAmountDescription('one-for-all')}>
-                Satu untuk semua
+                Bagi rata
               </Radio>
             </RadioGroup>
           )}
           <Input
             label="Tujuan"
-            placeholder="e.g. Tiket masuk Obelix Sea View"
+            placeholder="contoh: Tiket masuk Obelix Sea View"
             radius="sm"
             labelPlacement="outside"
             variant="bordered"
@@ -252,8 +252,8 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
           />
 
           <Textarea
-            label="Deskripsi"
-            placeholder="e.g. Mahal tapi pemandangannya bagus heheh"
+            label="Catatan"
+            placeholder="contoh: Mahal tapi pemandangannya bagus heheh"
             radius="sm"
             variant="bordered"
             labelPlacement="outside"
@@ -265,10 +265,10 @@ export const TransactionForm = ({ onClose, transaction, isEdit }: Props) => {
       </ModalBody>
       <ModalFooter>
         <Button color="danger" radius="sm" variant="light" onPress={onClose}>
-          Batal
+          Ga jadi
         </Button>
         <Button variant="flat" radius="sm" onPress={onSubmit} isDisabled={!isAllValid()}>
-          {isEdit ? 'Edit' : 'Tambah'}
+          {isEdit ? 'Ubah' : 'Tambah aja'}
         </Button>
       </ModalFooter>
     </>

@@ -86,12 +86,12 @@ export const Members = () => {
                   <XMarkIcon className="w-5 h-5" />
                 </Button>
               </div>
-              {!filteredMembers.length && (
-                <p className="text-center opacity-80 dark:opacity-60">Cari anggota pake keyword lain!</p>
-              )}
+              {!filteredMembers.length && <p className="text-center opacity-80 dark:opacity-60">Gak ketemu, coba kata lain!</p>}
             </>
           )}
-          {!members.length && !isAdding && <p className="text-center opacity-80 dark:opacity-60">Belum ada anggota</p>}
+          {!members.length && !isAdding && (
+            <p className="text-center opacity-80 dark:opacity-60">Belum ada anggota, tambahin dulu</p>
+          )}
           {isAdding && <MemberInput onSubmit={addMember} onCancel={() => setIsAdding(false)} />}
           <div className="flex flex-col gap-2">
             {filteredMembers.map((member) => (

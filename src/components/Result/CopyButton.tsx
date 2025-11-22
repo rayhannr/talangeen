@@ -36,7 +36,7 @@ export const CopyButton = ({ data }: Props) => {
   }
 
   return (
-    <Tooltip content="Salin hasil">
+    <Tooltip content="Salin">
       <Button isIconOnly variant="flat" radius="sm" onClick={copy}>
         {isCopied ? <ClipboardDocumentCheckIcon className="w-5 h-5" /> : <ClipboardIcon className="w-5 h-5" />}
       </Button>

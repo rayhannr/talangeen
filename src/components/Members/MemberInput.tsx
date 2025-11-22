@@ -26,10 +26,10 @@ export const MemberInput = ({ onSubmit, onCancel, selectedMember }: Props) => {
   return (
     <form className="flex gap-1" onSubmit={handleSubmit}>
       <Input
-        placeholder="Nama anggota"
+        placeholder="Tulis nama anggota"
         className="flex-grow"
         isInvalid={isInvalid}
-        errorMessage={isInvalid && 'Nama anggota gak boleh kosong'}
+        errorMessage={isInvalid && 'Nama gak boleh kosong'}
         value={value}
         onValueChange={(value) => {
           setValue(value)

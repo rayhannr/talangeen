@@ -48,7 +48,7 @@ export const InfoModalV1 = ({ isOpen, onOpenChange }: Props) => {
               Kemudian dibagi rata (dalam ribuan), sisanya (jika ada) diberikan sebagai penambahan 1.000 kepada beberapa orang.
             </li>
             <li>
-              Contoh: 29.000 dibagi 3 → 29 ribu → 9 ribu, 9 ribu, 11 ribu (ditampilkan sebagai 9.000 (plus 1.000 untuk 2 orang)
+              Contoh: 29.000 dibagi 3 → 29 ribu → 9 ribu, 10 ribu, 10 ribu (ditampilkan sebagai 9.000 (plus 1.000 untuk 2 orang)
               pada ringkasan).
             </li>
           </ul>

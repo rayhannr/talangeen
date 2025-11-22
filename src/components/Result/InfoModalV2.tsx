@@ -49,7 +49,7 @@ export const InfoModalV2 = ({ isOpen, onOpenChange }: Props) => {
               Jika ada sisa ribuan setelah pembagian rata, sisa tersebut akan didistribusikan sebagai tambahan 1.000 kepada
               beberapa penerima (ditentukan oleh logika distribusi sisanya).
             </li>
-            <li>Contoh ringkas: 29.000 dibagi 3 → 9.000, 9.000, 11.000 (sisa didistribusikan sebagai tambahan ribuan).</li>
+            <li>Contoh ringkas: 29.000 dibagi 3 → 9.000, 10.000, 10.000 (sisa didistribusikan sebagai tambahan ribuan).</li>
           </ul>
         </ModalBody>
       </ModalContent>

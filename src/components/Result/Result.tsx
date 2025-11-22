@@ -65,9 +65,7 @@ export const Result = () => {
         <p className="font-bold">Hasil</p>
         <div className="flex items-center justify-end gap-2">
           {isUpdated && !!bailoutsV1.length && (
-            <span className="opacity-80 dark:opacity-60 text-sm text-pretty">
-              Ada perubahan data anggota atau transaksi. Silakan hitung ulang.
-            </span>
+            <span className="opacity-80 dark:opacity-60 text-sm text-pretty">Data berubah, hitung ulang dong.</span>
           )}
           {isResultGenerated && !isFiltering && (
             <Tooltip content="Filter hasil">
